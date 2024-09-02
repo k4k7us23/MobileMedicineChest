@@ -1,21 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:medicine_chest/data/medicine/medicine_pack_storage_impl.dart';
+import 'package:medicine_chest/data/medicine/medicine_storage_impl.dart';
+import 'package:medicine_chest/ui/add_medicine_pack/add_medicine_pack_full.dart';
+import 'package:medicine_chest/ui/dependencies/medicine_pack_storage.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final MedicinePackStorage medicinePackStorageImpl = MedicinePackStorageImpl();
+  final MedicineStorageImpl medicineStorageImpl = MedicineStorageImpl();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlueAccent),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: AddMedicinePackFullPage(medicineStorage: medicineStorageImpl, medicinePackStorage: medicinePackStorageImpl,),
     );
   }
 }
