@@ -74,13 +74,19 @@ class _AddMedicinePackFullPageState extends State<AddMedicinePackFullPage> {
         color: Theme.of(context).colorScheme.primary);
   }
 
-  void onSave() {
+  void onSave() async {
     MedicinePack? medicinePack = _packCreateKey.currentState?.collectOnSave();
     Medicine? medicine =
         _medicineSelectOrCreateKey.currentState?.collectOnSave();
 
     if (medicine != null && medicinePack != null) {
+     
+      int savedMedicineId = await medicineStorage.saveMedicine(medicine);
+
+      medicine.id = savedMedicineId;
       medicinePack.medicine = medicine;
+
+      await medicinePackStorage.saveMedicinePack(medicinePack);
     }
   }
 }

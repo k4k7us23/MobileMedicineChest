@@ -3,5 +3,6 @@ analyzer:
   errors:
     avoid_init_to_null: ignore
     no_logic_in_create_state: ignore
+    non_constant_identifier_names: ignore
     prefer_const_constructors: ignore
     prefer_const_literals_to_create_immutables: ignore

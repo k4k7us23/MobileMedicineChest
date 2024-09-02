@@ -165,7 +165,7 @@ class MedicineCreateWidgetState extends State<MedicineCreateWidget> {
   Medicine? collectOnSave() {
     if (_formKey.currentState?.validate() == true) {
         String name = _nameController.text;
-        return Medicine(id: 0, name: name, releaseForm: _releaseForm);
+        return Medicine(id: Medicine.NO_ID, name: name, releaseForm: _releaseForm);
     }
     return null;
   }

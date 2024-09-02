@@ -7,4 +7,6 @@ class MedicinePack {
   DateTime expirationTime;
 
   MedicinePack({required this.id, this.medicine, required this.leftAmount, required this.expirationTime});
+
+  static int NO_ID = -1;
 }

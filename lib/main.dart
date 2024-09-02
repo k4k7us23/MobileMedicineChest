@@ -1,18 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:medicine_chest/data/database_creator.dart';
 import 'package:medicine_chest/data/medicine/medicine_pack_storage_impl.dart';
 import 'package:medicine_chest/data/medicine/medicine_storage_impl.dart';
 import 'package:medicine_chest/ui/add_medicine_pack/add_medicine_pack_full.dart';
 import 'package:medicine_chest/ui/dependencies/medicine_pack_storage.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
-void main() {
-  runApp(MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final database = openDatabase(
+    join(await getDatabasesPath(), 'medicine.db'),
+    onCreate: (db, version) {
+      var dbCreator = DatabaseCreator(db);
+      dbCreator.create();
+    },
+    version: DatabaseCreator.DATABASE_VERSION
+  );
+
+  final medicineStorageImpl = MedicineStorageImpl(database);
+  final medicinePackStorageImpl = MedicinePackStorageImpl(database);
+
+  runApp(MyApp(medicinePackStorageImpl: medicinePackStorageImpl, medicineStorageImpl: medicineStorageImpl,));
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  final MedicinePackStorage medicinePackStorageImpl;
+  final MedicineStorageImpl medicineStorageImpl;
 
-  final MedicinePackStorage medicinePackStorageImpl = MedicinePackStorageImpl();
-  final MedicineStorageImpl medicineStorageImpl = MedicineStorageImpl();
+  const MyApp(
+      {super.key,
+      required this.medicinePackStorageImpl,
+      required this.medicineStorageImpl});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +41,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlueAccent),
         useMaterial3: true,
       ),
-      home: AddMedicinePackFullPage(medicineStorage: medicineStorageImpl, medicinePackStorage: medicinePackStorageImpl,),
+      home: AddMedicinePackFullPage(
+        medicineStorage: medicineStorageImpl,
+        medicinePackStorage: medicinePackStorageImpl,
+      ),
     );
   }
 }
@@ -70,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
-      ), 
+      ),
     );
   }
 }

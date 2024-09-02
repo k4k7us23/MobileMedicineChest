@@ -74,7 +74,7 @@ class MedicinePackCreateWidgetState extends State<MedicinePackCreateWidget> {
     if (_formKey.currentState?.validate() == true) {
       double? amountLeft = parseAmountLeft(_amountController.text);
       if (amountLeft != null) {
-        return MedicinePack(id: 0, leftAmount: amountLeft, expirationTime: _expirationTime);
+        return MedicinePack(id: MedicinePack.NO_ID, leftAmount: amountLeft, expirationTime: _expirationTime);
       } else {
         return null;
       }

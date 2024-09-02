@@ -26,6 +26,8 @@ extension MedicineReleaseFormName on MedicineReleaseForm {
 
 
 class Medicine {
+  static int NO_ID = -1;
+
   int id;
   String name;
   MedicineReleaseForm releaseForm;
