@@ -49,7 +49,7 @@ class _AddMedicinePackFullPageState extends State<AddMedicinePackFullPage> {
               child: Text("Лекарство", style: _getSectionStyle(context)),
             ),
           ),
-          MedicineSelectOrCreateWidget(key: _medicineSelectOrCreateKey),
+          MedicineSelectOrCreateWidget(medicineStorage, key: _medicineSelectOrCreateKey),
           Padding(
             padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 40.0),
             child: Align(
@@ -61,7 +61,7 @@ class _AddMedicinePackFullPageState extends State<AddMedicinePackFullPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => {onSave()},
+        onPressed: () => {onSave(context)},
         child: const Icon(Icons.check),
       ),
     );
@@ -74,10 +74,10 @@ class _AddMedicinePackFullPageState extends State<AddMedicinePackFullPage> {
         color: Theme.of(context).colorScheme.primary);
   }
 
-  void onSave() async {
+  void onSave(BuildContext context) async {
     MedicinePack? medicinePack = _packCreateKey.currentState?.collectOnSave();
     Medicine? medicine =
-        _medicineSelectOrCreateKey.currentState?.collectOnSave();
+        _medicineSelectOrCreateKey.currentState?.collectOnSave(context);
 
     if (medicine != null && medicinePack != null) {
      
@@ -87,6 +87,8 @@ class _AddMedicinePackFullPageState extends State<AddMedicinePackFullPage> {
       medicinePack.medicine = medicine;
 
       await medicinePackStorage.saveMedicinePack(medicinePack);
+
+      
     }
   }
 }

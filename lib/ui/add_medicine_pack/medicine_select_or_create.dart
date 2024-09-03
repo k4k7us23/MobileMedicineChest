@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:medicine_chest/entities/medicine.dart';
+import 'package:medicine_chest/ui/dependencies/medicine_storage.dart';
 import 'package:medicine_chest/ui/shared/medicine_release_form_selector.dart';
 
 enum _Type { _select, _create }
 
 class MedicineSelectOrCreateWidget extends StatefulWidget {
-  const MedicineSelectOrCreateWidget({super.key});
+  MedicineStorage _medicineStorage;
+
+  MedicineSelectOrCreateWidget(this._medicineStorage, {super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return MedicineSelectOrCreateState();
+    return MedicineSelectOrCreateState(_medicineStorage);
   }
 }
 
 class MedicineSelectOrCreateState extends State<MedicineSelectOrCreateWidget> {
+  MedicineStorage _medicineStorage;
+
+  MedicineSelectOrCreateState(this._medicineStorage);
+
   _Type _currentType = _Type._select;
 
   final _createKey = GlobalKey<MedicineCreateWidgetState>();
@@ -57,42 +64,106 @@ class MedicineSelectOrCreateState extends State<MedicineSelectOrCreateWidget> {
   }
 
   Widget _selectExisting() {
-    return MedicineSelectWidget(key: _selectKey);
+    return MedicineSelectWidget(_medicineStorage, key: _selectKey);
   }
 
   Widget _createNew() {
     return MedicineCreateWidget(key: _createKey);
   }
 
-  Medicine? collectOnSave() {
+  Medicine? collectOnSave(BuildContext context) {
     if (_currentType == _Type._create) {
-        return _createKey.currentState?.collectOnSave();
+      return _createKey.currentState?.collectOnSave();
     } else {
-      return _selectKey.currentState?.collectOnSave();
+      return _selectKey.currentState?.collectOnSave(context);
     }
   }
 }
 
 class MedicineSelectWidget extends StatefulWidget {
+  MedicineStorage _medicineStorage;
 
-  const MedicineSelectWidget({super.key});
+  MedicineSelectWidget(this._medicineStorage, {super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return MedicineSelectWidgetState();
+    return MedicineSelectWidgetState(_medicineStorage);
   }
 }
 
 class MedicineSelectWidgetState extends State<MedicineSelectWidget> {
+  MedicineStorage _medicineStorage;
+
+  MedicineSelectWidgetState(this._medicineStorage);
+
+  List<Medicine>? _medicines = null;
+  Medicine? _selectedMedicine = null;
+
   @override
-  Widget build(BuildContext context) {
-     return Text("select existing todo");
+  void initState() {
+    super.initState();
+    _loadMedicines();
   }
 
+  void _loadMedicines() async {
+    var loadedMedicines = await _medicineStorage.getMedicines();
+    setState(() {
+      _medicines = loadedMedicines;
+      if (loadedMedicines.isNotEmpty) {
+        _selectedMedicine = loadedMedicines.first;
+      }
+    });
+  }
 
-  Medicine? collectOnSave() {
-    // TODO
-    return null;
+  @override
+  Widget build(BuildContext context) {
+    if (_medicines == null) {
+      return Text("Идет загрузка");
+    } else if (_medicines!.isEmpty) {
+      return Text("Пока нет созданных лекарств");
+    } else {
+      return Padding(
+        padding: EdgeInsets.only(top: 12.0),
+        child: _medicineSelector(),
+      );
+    }
+  }
+
+  Widget _medicineSelector() {
+    return DropdownMenu<Medicine>(
+      initialSelection: _selectedMedicine,
+      label: const Text('Выберите лекарство'),
+      onSelected: (value) {
+        setState(() {
+          _selectedMedicine = value;
+        });
+      },
+      dropdownMenuEntries: _medicines!.map(_mapToMenuEntry).toList(),
+      expandedInsets: EdgeInsets.zero,
+    );
+  }
+
+  DropdownMenuEntry<Medicine> _mapToMenuEntry(Medicine medicine) {
+    String dosagePart = "";
+    if (medicine.dosage != null) {
+      dosagePart = "Дозировка ${medicine.dosage!.toStringAsFixed(2)}";
+    }
+
+    String label = "${medicine.name} ${medicine.releaseForm.name} $dosagePart";
+
+    return DropdownMenuEntry(value: medicine, label: label);
+  }
+
+  Medicine? collectOnSave(BuildContext context) {
+    if (_selectedMedicine == null) {
+      final snackBar = SnackBar(
+        content: Text('Необходимо выбрать лекарство.'),
+        duration: Duration(seconds: 2), 
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return null;
+    }
+    return _selectedMedicine;
   }
 }
 
@@ -145,7 +216,8 @@ class MedicineCreateWidgetState extends State<MedicineCreateWidget> {
                 controller: _dosageContoller,
                 validator: (value) {
                   var valueWithoutSpaces = value?.replaceAll(" ", "");
-                  if (valueWithoutSpaces == null || valueWithoutSpaces.isEmpty) {
+                  if (valueWithoutSpaces == null ||
+                      valueWithoutSpaces.isEmpty) {
                     return null;
                   }
                   var leftAmount = NumberFormat().tryParse(valueWithoutSpaces);
@@ -153,7 +225,7 @@ class MedicineCreateWidgetState extends State<MedicineCreateWidget> {
                     return "Дозировка лекарства должена быть числом";
                   }
                   return null;
-                } ,
+                },
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                     border: UnderlineInputBorder(),
@@ -164,8 +236,9 @@ class MedicineCreateWidgetState extends State<MedicineCreateWidget> {
 
   Medicine? collectOnSave() {
     if (_formKey.currentState?.validate() == true) {
-        String name = _nameController.text;
-        return Medicine(id: Medicine.NO_ID, name: name, releaseForm: _releaseForm);
+      String name = _nameController.text;
+      return Medicine(
+          id: Medicine.NO_ID, name: name, releaseForm: _releaseForm);
     }
     return null;
   }

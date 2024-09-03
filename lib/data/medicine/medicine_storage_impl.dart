@@ -43,4 +43,32 @@ class MedicineStorageImpl implements MedicineStorage {
       case MedicineReleaseForm.other: return 5;
     }
   }
+
+  MedicineReleaseForm? _decodeReleaseForm(int value) {
+    switch (value) {
+      case 1: return MedicineReleaseForm.tablet;
+      case 2: return MedicineReleaseForm.injection;
+      case 3: return MedicineReleaseForm.liquid;
+      case 4: return MedicineReleaseForm.powder;
+      case 5: return MedicineReleaseForm.other;
+      default: return null;
+    }
+  }
+  
+  @override
+  Future<List<Medicine>> getMedicines() async {
+    final db = await _db;
+
+    final List<Map<String, Object?>> medicineMaps = await db.query(_tableName);
+    return medicineMaps.map(_convertToMedicine).nonNulls.toList();
+  }
+
+  Medicine? _convertToMedicine(Map<String, Object?> data) {
+    var releaseForm = _decodeReleaseForm(data["releaseForm"] as int);
+    if (releaseForm != null) {
+      return Medicine(id: data["id"] as int, name: data["name"] as String, releaseForm: releaseForm);
+    } else {
+      return null;
+    }
+  }
 }
