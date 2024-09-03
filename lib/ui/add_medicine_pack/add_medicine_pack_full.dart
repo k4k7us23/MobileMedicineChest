@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:medicine_chest/entities/medicine.dart';
 import 'package:medicine_chest/entities/medicine_pack.dart';
 import 'package:medicine_chest/ui/add_medicine_pack/medicine_pack_create.dart';
@@ -88,7 +89,15 @@ class _AddMedicinePackFullPageState extends State<AddMedicinePackFullPage> {
 
       await medicinePackStorage.saveMedicinePack(medicinePack);
 
-      
+      FocusManager.instance.primaryFocus?.unfocus(); // hide keyboard
+
+      Fluttertoast.showToast(
+        msg: "Лекарство добавлено",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
     }
   }
 }
