@@ -41,26 +41,33 @@ class _AddMedicinePackFullPageState extends State<AddMedicinePackFullPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("Добавить упаковку лекарства"),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text("Лекарство", style: _getSectionStyle(context)),
+      body: RawScrollbar(
+          child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text("Лекарство", style: _getSectionStyle(context)),
+              ),
             ),
-          ),
-          MedicineSelectOrCreateWidget(medicineStorage, key: _medicineSelectOrCreateKey),
-          Padding(
-            padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 40.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text("Упаковка", style: _getSectionStyle(context)),
+            MedicineSelectOrCreateWidget(medicineStorage,
+                key: _medicineSelectOrCreateKey),
+            Padding(
+              padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 40.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text("Упаковка", style: _getSectionStyle(context)),
+              ),
             ),
-          ),
-          MedicinePackCreateWidget(key: _packCreateKey),
-        ],
-      ),
+            MedicinePackCreateWidget(key: _packCreateKey),
+            SizedBox(
+              height: 20,
+            )
+          ],
+        ),
+      )),
       floatingActionButton: FloatingActionButton(
         onPressed: () => {onSave(context)},
         child: const Icon(Icons.check),
@@ -81,7 +88,6 @@ class _AddMedicinePackFullPageState extends State<AddMedicinePackFullPage> {
         _medicineSelectOrCreateKey.currentState?.collectOnSave(context);
 
     if (medicine != null && medicinePack != null) {
-     
       int savedMedicineId = await medicineStorage.saveMedicine(medicine);
 
       medicine.id = savedMedicineId;
@@ -92,12 +98,11 @@ class _AddMedicinePackFullPageState extends State<AddMedicinePackFullPage> {
       FocusManager.instance.primaryFocus?.unfocus(); // hide keyboard
 
       Fluttertoast.showToast(
-        msg: "Лекарство добавлено",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        textColor: Colors.white,
-        fontSize: 16.0
-    );
+          msg: "Лекарство добавлено",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
   }
 }
