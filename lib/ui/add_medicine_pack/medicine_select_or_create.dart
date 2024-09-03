@@ -146,10 +146,10 @@ class MedicineSelectWidgetState extends State<MedicineSelectWidget> {
   DropdownMenuEntry<Medicine> _mapToMenuEntry(Medicine medicine) {
     String dosagePart = "";
     if (medicine.dosage != null) {
-      dosagePart = "Дозировка ${medicine.dosage!.toStringAsFixed(2)}";
+      dosagePart = "(дозировка ${medicine.dosage!.toStringAsFixed(2)})";
     }
 
-    String label = "${medicine.name} ${medicine.releaseForm.name} $dosagePart";
+    String label = "${medicine.name} (форма выпуска: ${medicine.releaseForm.name}) $dosagePart";
 
     return DropdownMenuEntry(value: medicine, label: label);
   }
