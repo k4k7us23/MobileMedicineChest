@@ -62,9 +62,7 @@ class _AddMedicinePackFullPageState extends State<AddMedicinePackFullPage> {
               ),
             ),
             MedicinePackCreateWidget(key: _packCreateKey),
-            SizedBox(
-              height: 20,
-            )
+            SizedBox(height: 20),
           ],
         ),
       )),

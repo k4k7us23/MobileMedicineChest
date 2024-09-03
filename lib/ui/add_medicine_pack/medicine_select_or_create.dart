@@ -23,9 +23,27 @@ class MedicineSelectOrCreateState extends State<MedicineSelectOrCreateWidget> {
   MedicineSelectOrCreateState(this._medicineStorage);
 
   _Type _currentType = _Type._select;
+  bool _selectAllowed = true;
 
   final _createKey = GlobalKey<MedicineCreateWidgetState>();
   final _selectKey = GlobalKey<MedicineSelectWidgetState>();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initialLoad();
+  }
+
+  void initialLoad() async {
+    bool hasAnyMedicines = await _medicineStorage.hasAnyMedicines();
+    if (!hasAnyMedicines) {
+      setState(() {
+        _selectAllowed = false;
+        _currentType = _Type._create;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,11 +59,12 @@ class MedicineSelectOrCreateState extends State<MedicineSelectOrCreateWidget> {
 
   Widget _typeSwitcher() {
     return SegmentedButton<_Type>(
-      segments: const <ButtonSegment<_Type>>[
+      segments: <ButtonSegment<_Type>>[
         ButtonSegment<_Type>(
           value: _Type._select,
           label: Text('Выбрать существующее'),
           icon: null,
+          enabled: _selectAllowed,
         ),
         ButtonSegment<_Type>(
           value: _Type._create,
