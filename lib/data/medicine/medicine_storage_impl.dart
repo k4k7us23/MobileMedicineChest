@@ -1,7 +1,6 @@
 import 'package:medicine_chest/entities/medicine.dart';
 import 'package:medicine_chest/ui/dependencies/medicine_storage.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite/sqlite_api.dart';
 
 class MedicineStorageImpl implements MedicineStorage {
   static const String _tableName = "medicine";
@@ -71,7 +70,10 @@ class MedicineStorageImpl implements MedicineStorage {
   Future<List<Medicine>> getMedicines() async {
     final db = await _db;
 
-    final List<Map<String, Object?>> medicineMaps = await db.query(_tableName);
+    final List<Map<String, Object?>> medicineMaps = await db.query(
+      _tableName,
+       orderBy: 'name ASC'
+    );
     return medicineMaps.map(_convertToMedicine).nonNulls.toList();
   }
 
