@@ -56,7 +56,7 @@ class _MedicinesListPageState extends State<MedicinesListPage> {
   }
 
   Widget _loader() {
-    return Text("Загрузка"); // todo;
+    return Center(child: CircularProgressIndicator(value: null,)); // todo;
   }
 
   Widget _mainList(List<MedicineWithPacks> medicineWithPacks) {
@@ -95,6 +95,7 @@ class _MedicinesListPageState extends State<MedicinesListPage> {
       result.add(MedicineWithPacks(medicine, packs));
     }
 
+    await Future.delayed(Duration(seconds: 50));
     return result;
   }
 }
