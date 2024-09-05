@@ -1,3 +1,4 @@
+import 'package:medicine_chest/entities/medicine.dart';
 import 'package:medicine_chest/entities/medicine_pack.dart';
 import 'package:medicine_chest/ui/dependencies/medicine_pack_storage.dart';
 import 'package:sqflite/sqlite_api.dart';
@@ -32,6 +33,29 @@ class MedicinePackStorageImpl implements MedicinePackStorage {
     if (pack.id != MedicinePack.NO_ID) {
       values['id'] = pack.id;
     }
-    return db.insert(_tableName, values, conflictAlgorithm: ConflictAlgorithm.replace);
+    return db.insert(_tableName, values,
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  @override
+  Future<List<MedicinePack>> getMedicinePacksByMedicine(Medicine medicine) async {
+    final db = await _db;
+    final List<Map<String, Object?>> medicinePacks = await db
+        .query(_tableName, where: 'medicine_id = ?', whereArgs: [medicine.id]);
+    List<MedicinePack> result = [];
+    for (var data in medicinePacks) {
+      var pack = _convertToMedicinePack(data);
+      pack.medicine = medicine;
+      result.add(pack);
+    }
+    return result;
+  }
+
+  MedicinePack _convertToMedicinePack(Map<String, Object?> data) {
+    return MedicinePack(
+        id: data['id'] as int,
+        leftAmount: data['left_amount'] as double,
+        expirationTime: DateTime.fromMillisecondsSinceEpoch(
+            data['expiration_time'] as int));
   }
 }

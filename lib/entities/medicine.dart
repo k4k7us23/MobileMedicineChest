@@ -9,7 +9,6 @@ enum MedicineReleaseForm {
 extension MedicineReleaseFormName on MedicineReleaseForm {
   String get name {
     switch (this) {
-      
       case MedicineReleaseForm.tablet:
         return "Таблетка";
       case MedicineReleaseForm.injection:

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:medicine_chest/data/database_creator.dart';
 import 'package:medicine_chest/data/medicine/medicine_pack_storage_impl.dart';
 import 'package:medicine_chest/data/medicine/medicine_storage_impl.dart';
-import 'package:medicine_chest/ui/add_medicine_pack/add_medicine_pack_full.dart';
 import 'package:medicine_chest/ui/dependencies/medicine_pack_storage.dart';
+import 'package:medicine_chest/ui/medicine_list/medicine_list.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -41,10 +41,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlueAccent),
         useMaterial3: true,
       ),
-      home: AddMedicinePackFullPage(
-        medicineStorage: medicineStorageImpl,
-        medicinePackStorage: medicinePackStorageImpl,
-      ),
+      home: MedicinesListPage(medicineStorageImpl, medicinePackStorageImpl),
     );
   }
 }
