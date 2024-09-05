@@ -22,7 +22,7 @@ class MedicinePacksTitleWidget extends StatelessWidget {
         ),
         Text(
           'Остаток: $leftAmount',
-          style: TextStyle(fontSize: 22),
+          style: TextStyle(fontSize: 18),
         ),
       ],
     );

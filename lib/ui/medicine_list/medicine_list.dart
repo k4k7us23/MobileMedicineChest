@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:medicine_chest/entities/medicine.dart';
 import 'package:medicine_chest/entities/medicine_pack.dart';
+import 'package:medicine_chest/ui/add_medicine_pack/add_medicine_pack_full.dart';
 import 'package:medicine_chest/ui/dependencies/medicine_pack_storage.dart';
 import 'package:medicine_chest/ui/dependencies/medicine_storage.dart';
 import 'package:medicine_chest/ui/medicine_list/medicine_pack_widget.dart';
@@ -31,10 +32,13 @@ class _MedicinesListPageState extends State<MedicinesListPage> {
   @override
   void initState() {
     super.initState();
-    loadPacks();
+    _loadPacks();
   }
 
-  void loadPacks() async {
+  void _loadPacks() async {
+    setState(() {
+      _medicineWithPacks = null;
+    });
     List<MedicineWithPacks> data = await _getMedicineWithPacks();
     setState(() {
       _medicineWithPacks = data;
@@ -52,11 +56,18 @@ class _MedicinesListPageState extends State<MedicinesListPage> {
         title: Text("Cписок лекарств"),
       ),
       body: child,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => {_onAddClicked()},
+        child: const Icon(Icons.add),
+      ),
     );
   }
 
   Widget _loader() {
-    return Text("Загрузка"); // todo;
+    return Center(
+        child: CircularProgressIndicator(
+      value: null,
+    )); // todo;
   }
 
   Widget _mainList(List<MedicineWithPacks> medicineWithPacks) {
@@ -69,7 +80,8 @@ class _MedicinesListPageState extends State<MedicinesListPage> {
           title: _buildTitle(medicineWithPack),
           expandedAlignment: Alignment.topLeft,
           tilePadding: EdgeInsetsDirectional.symmetric(horizontal: 8.0),
-          childrenPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+          childrenPadding:
+              EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
           children: packs.map(_buildMedicinePackUi).toList(),
         );
       },
@@ -82,7 +94,7 @@ class _MedicinesListPageState extends State<MedicinesListPage> {
   }
 
   Widget _buildMedicinePackUi(MedicinePack pack) {
-   return MedicinePackWidget(pack);
+    return MedicinePackWidget(pack);
   }
 
   Future<List<MedicineWithPacks>> _getMedicineWithPacks() async {
@@ -91,12 +103,25 @@ class _MedicinesListPageState extends State<MedicinesListPage> {
     for (var medicine in medicines) {
       var packs =
           await _medicinePackStorage.getMedicinePacksByMedicine(medicine);
-      packs.sort((packA, packB) => packA.expirationTime.compareTo(packB.expirationTime));
+      packs.sort((packA, packB) =>
+          packA.expirationTime.compareTo(packB.expirationTime));
       result.add(MedicineWithPacks(medicine, packs));
     }
 
     return result;
   }
+
+  void _onAddClicked() async {
+    bool? newMedicineAdded = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) =>  AddMedicinePackFullPage(
+          medicineStorage: _medicineStorageImpl,
+          medicinePackStorage: _medicinePackStorage,
+        ),
+      ),
+    );
+    if (newMedicineAdded == true) {
+      _loadPacks();
+    }
+  }
 }
-
-
