@@ -101,6 +101,8 @@ class _AddMedicinePackFullPageState extends State<AddMedicinePackFullPage> {
           gravity: ToastGravity.BOTTOM,
           textColor: Colors.white,
           fontSize: 16.0);
+
+      Navigator.of(context).pop(true);
     }
   }
 }
