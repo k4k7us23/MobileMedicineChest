@@ -46,8 +46,6 @@ class DatePickerTextFieldState extends State<DatePickerTextField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
-        //enableInteractiveSelection: false,
-        //focusNode: FocusNode(),
         controller: _textFieldController,
         onTap: () async {
           DateTime? picked = await showDatePicker(

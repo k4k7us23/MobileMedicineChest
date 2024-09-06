@@ -30,7 +30,6 @@ class MedicineSelectOrCreateState extends State<MedicineSelectOrCreateWidget> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     initialLoad();
   }
