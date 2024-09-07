@@ -172,6 +172,8 @@ class AddSchemeState extends State<AddSchemePage> {
           gravity: ToastGravity.BOTTOM,
           textColor: Colors.white,
           fontSize: 16.0);
+
+      Navigator.of(context).pop(true);
     }
   }
 }

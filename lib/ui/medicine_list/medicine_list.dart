@@ -57,7 +57,7 @@ class _MedicinesListPageState extends State<MedicinesListPage> {
       ),
       body: child,
       floatingActionButton: FloatingActionButton(
-        onPressed: () => {_onAddClicked()},
+        onPressed: () => { _onAddClicked() },
         child: const Icon(Icons.add),
       ),
     );
@@ -67,7 +67,7 @@ class _MedicinesListPageState extends State<MedicinesListPage> {
     return Center(
         child: CircularProgressIndicator(
       value: null,
-    )); // todo;
+    ));
   }
 
   Widget _mainList(List<MedicineWithPacks> medicineWithPacks) {
