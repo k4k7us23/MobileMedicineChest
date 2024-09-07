@@ -1,5 +1,6 @@
 import 'package:medicine_chest/data/medicine/medicine_pack_storage_impl.dart';
 import 'package:medicine_chest/data/medicine/medicine_storage_impl.dart';
+import 'package:medicine_chest/data/scheme/scheme_storage_impl.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class DatabaseCreator {
@@ -14,6 +15,7 @@ class DatabaseCreator {
   void create() {
     MedicineStorageImpl.onDatabaseCreate(db);
     MedicinePackStorageImpl.onDatabaseCreate(db);
+    SchemeStorageImpl.onDatabaseCreate(db);
   }
 
 }

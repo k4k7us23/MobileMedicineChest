@@ -5,6 +5,7 @@ class DatePickerTextField extends StatefulWidget {
   final String? label;
   final DateTime? initialDate;
   final DateTime? minDateTime;
+  final DateTime? maxDateTime;
   final ValueSetter<DateTime>? dateTimeSetted;
 
   const DatePickerTextField(
@@ -12,6 +13,7 @@ class DatePickerTextField extends StatefulWidget {
       this.label,
       this.initialDate,
       this.minDateTime,
+      this.maxDateTime,
       this.dateTimeSetted});
 
   @override
@@ -26,14 +28,14 @@ class DatePickerTextField extends StatefulWidget {
 
 class DatePickerTextFieldState extends State<DatePickerTextField> {
   DateTime? minDateTime;
-  final DateTime _maxDateTime = DateTime(2200, 0);
+  DateTime? maxDateTime;
   final String? label;
   final ValueSetter<DateTime>? dateTimeSetted;
 
   DateTime? selectedDate;
 
   DatePickerTextFieldState(
-      {this.label, this.selectedDate, this.minDateTime, this.dateTimeSetted});
+      {this.label, this.selectedDate, this.minDateTime, this.dateTimeSetted, this.maxDateTime});
 
   final TextEditingController _textFieldController = TextEditingController();
 
@@ -52,7 +54,7 @@ class DatePickerTextFieldState extends State<DatePickerTextField> {
               context: context,
               initialDate: selectedDate,
               firstDate: _getMinDateTime(),
-              lastDate: _maxDateTime);
+              lastDate: maxDateTime ?? DateTime(2200, 0));
           setState(() {
             if (picked != null) {
               selectedDate = picked;

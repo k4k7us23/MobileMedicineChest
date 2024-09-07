@@ -2,17 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DayTimeMomentsSelector extends StatefulWidget {
-  const DayTimeMomentsSelector({super.key});
+
+  ValueSetter<List<int>> _dayTimeMomentsUpdated;
+
+  DayTimeMomentsSelector(this._dayTimeMomentsUpdated, {super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return DayTimeMomentsState();
+    return DayTimeMomentsState(this._dayTimeMomentsUpdated);
   }
 }
 
 class DayTimeMomentsState extends State<DayTimeMomentsSelector> {
   static const int _minutesInHour = 60;
   static final NumberFormat timeMomentNumberFormat = NumberFormat("00");
+
+  ValueSetter<List<int>> _dayTimeMomentsUpdated;
+
+  DayTimeMomentsState(this._dayTimeMomentsUpdated);
 
   final List<int> _dayTimeMoments = [];
 
@@ -91,12 +98,15 @@ class DayTimeMomentsState extends State<DayTimeMomentsSelector> {
       _dayTimeMoments.sort();
       final moments = Set<int>();
       _dayTimeMoments.retainWhere((moment) => moments.add(moment));
+
+      _dayTimeMomentsUpdated.call([..._dayTimeMoments]);
     });
   }
 
   void _removeDayTimeMoment(int dayTimeMoment) {
     setState(() {
       _dayTimeMoments.remove(dayTimeMoment);
+      _dayTimeMomentsUpdated.call([..._dayTimeMoments]);
     });
   }
 

@@ -1,26 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:medicine_chest/entities/every_day_schedule.dart';
 import 'package:medicine_chest/entities/medicine.dart';
+import 'package:medicine_chest/entities/scheme.dart';
+import 'package:medicine_chest/entities/take_schedule.dart';
 import 'package:medicine_chest/ui/add_medicine_pack/medicine_select_or_create.dart';
 import 'package:medicine_chest/ui/add_sheme/day_time_moments_selector.dart';
 import 'package:medicine_chest/ui/dependencies/medicine_storage.dart';
+import 'package:medicine_chest/ui/dependencies/scheme_storage.dart';
 import 'package:medicine_chest/ui/shared/date_picker_text_field.dart';
 
 class AddSchemePage extends StatefulWidget {
   MedicineStorage _medicineStorage;
+  SchemeStorage _schemeStorage;
 
-  AddSchemePage(this._medicineStorage, {super.key});
+  AddSchemePage(this._medicineStorage, this._schemeStorage, {super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return AddSchemeState(_medicineStorage);
+    return AddSchemeState(_medicineStorage, _schemeStorage);
   }
 }
 
 class AddSchemeState extends State<AddSchemePage> {
   MedicineStorage _medicineStorage;
+  SchemeStorage _schemeStorage;
 
-  AddSchemeState(this._medicineStorage);
+  AddSchemeState(this._medicineStorage, this._schemeStorage);
 
   final _selectKey = GlobalKey<MedicineSelectWidgetState>();
   final _formKey = GlobalKey<FormState>();
@@ -28,6 +35,8 @@ class AddSchemeState extends State<AddSchemePage> {
   DateTime _endDateTime = DateTime.now().add(Duration(days: 7));
 
   final _dosageSizeController = TextEditingController();
+
+  List<int> _dayTimeMoments = [];
 
   @override
   Widget build(BuildContext context) {
@@ -46,13 +55,15 @@ class AddSchemeState extends State<AddSchemePage> {
           Padding(
               padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0),
               child: _mainContent()),
-          Padding(padding: EdgeInsets.symmetric(horizontal: 8.0), child:  _dayTimeMomentsSelector()),
+          Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.0),
+              child: _dayTimeMomentsSelector()),
         ]))));
   }
 
   Widget _mainContent() {
     return Column(children: [
-      MedicineSelectWidget(_medicineStorage),
+      MedicineSelectWidget(_medicineStorage, key: _selectKey,),
       _spaceBetweenInputs(),
       _firstDaySelectorWidget(),
       _spaceBetweenInputs(),
@@ -72,6 +83,7 @@ class AddSchemeState extends State<AddSchemePage> {
         label: "Первый день приема",
         initialDate: _beginDateTime,
         minDateTime: null,
+        maxDateTime: _endDateTime,
         dateTimeSetted: (newDateTime) => {
               setState(() {
                 _beginDateTime = newDateTime;
@@ -83,7 +95,7 @@ class AddSchemeState extends State<AddSchemePage> {
     return DatePickerTextField(
         label: "Последний день приема",
         initialDate: _endDateTime,
-        minDateTime: null,
+        minDateTime: _beginDateTime,
         dateTimeSetted: (newDateTime) => {
               setState(() {
                 _endDateTime = newDateTime;
@@ -123,13 +135,43 @@ class AddSchemeState extends State<AddSchemePage> {
   }
 
   Widget _dayTimeMomentsSelector() {
-    return DayTimeMomentsSelector();
+    return DayTimeMomentsSelector((dayTimeMoments) {
+      setState(() {
+        _dayTimeMoments = dayTimeMoments;
+      });
+    });
   }
 
   onSave(BuildContext _context) async {
     Medicine? medicine = _selectKey.currentState?.collectOnSave(context);
-    if (_formKey.currentState?.validate() == true) {
-      // todo save scheme
+    if (_formKey.currentState?.validate() == true && medicine != null) {
+      double? oneTakeAmount = _parseDosageLeft(_dosageSizeController.text);
+      if (oneTakeAmount == null) {
+        return;
+      }
+      if (_dayTimeMoments.isEmpty) {
+        Fluttertoast.showToast(
+            msg: "Необходимо задать хотя бы один момент времени",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        return;
+      }
+
+      TakeSchedule everyDaySchedule = EveryDaySchedule.create(
+          _dayTimeMoments, _beginDateTime, _endDateTime);
+      Scheme scheme =
+          Scheme(Scheme.NO_ID, medicine, oneTakeAmount, everyDaySchedule);
+
+      final int id = await _schemeStorage.saveScheme(scheme);
+
+      Fluttertoast.showToast(
+          msg: "Схема приема создана",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
   }
 }

@@ -29,8 +29,8 @@ class EveryDaySchedule extends TakeSchedule {
   Map<String, dynamic> toJson() {
     return {
       "timeMoments": _timeMoments,
-      "startTime": _startTime,
-      "endTime": _endTime,
+      "startTime": _startTime.millisecondsSinceEpoch,
+      "endTime": _endTime.millisecondsSinceEpoch,
     };
   }
 
@@ -40,7 +40,7 @@ class EveryDaySchedule extends TakeSchedule {
   }
 
   @override
-  DateTime? getLastTakeDay() {
+  DateTime getLastTakeDay() {
     return _endTime;
   }
 
