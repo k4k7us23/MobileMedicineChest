@@ -97,4 +97,22 @@ class MedicineStorageImpl implements MedicineStorage {
         await db.rawQuery('SELECT COUNT(*) FROM $_tableName'));
     return count != null && count > 0;
   }
+  
+  @override
+  Future<Medicine?> getMedicineById(int id) async {
+    final db = await _db;
+
+    final List<Map<String, Object?>> medicineMaps = await db.query(
+      _tableName,
+      where: "id = ?",
+      whereArgs: [id],
+    );
+
+    if (medicineMaps.isEmpty) {
+      return null;
+    } else {
+        Map<String, Object?> data = medicineMaps[0];
+        return _convertToMedicine(data);
+    }
+  }
 }

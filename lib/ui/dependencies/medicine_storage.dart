@@ -7,4 +7,6 @@ abstract class MedicineStorage {
   Future<bool> hasAnyMedicines();
 
   Future<List<Medicine>> getMedicines();
+
+  Future<Medicine?> getMedicineById(int id);
 }

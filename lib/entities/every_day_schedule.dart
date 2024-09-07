@@ -65,4 +65,8 @@ class EveryDaySchedule extends TakeSchedule {
       return result;
     }
   }
+
+  int getTakeTimesPerDay() {
+    return _timeMoments.length;
+  }
 }
