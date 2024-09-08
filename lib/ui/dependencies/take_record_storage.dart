@@ -1,0 +1,6 @@
+import 'package:medicine_chest/entities/take_record.dart';
+
+abstract class TakeRecordStorage {
+
+  Future<int> saveTakeRecord(TakeRecord record);
+}
