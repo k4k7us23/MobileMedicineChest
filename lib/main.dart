@@ -8,6 +8,7 @@ import 'package:medicine_chest/ui/add_sheme/add_scheme.dart';
 import 'package:medicine_chest/ui/dependencies/medicine_pack_storage.dart';
 import 'package:medicine_chest/ui/medicine_list/medicine_list.dart';
 import 'package:medicine_chest/ui/schemes_list/scheme_list.dart';
+import 'package:medicine_chest/ui/take_calendar/take_calendar_page.dart';
 import 'package:medicine_chest/ui/take_medicine/take_medicine.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -58,7 +59,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlueAccent),
         useMaterial3: true,
       ),
-      home: TakeMedicinePage(medicineStorageImpl, medicinePackStorageImpl, takeRecordStorageImpl),
+      home: TakeCalendarPage(),
     );
   }
 }
