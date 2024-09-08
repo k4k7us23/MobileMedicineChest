@@ -63,6 +63,7 @@ class DatePickerTextFieldState extends State<DatePickerTextField> {
             }
           });
         },
+        readOnly: true,
         decoration:
             InputDecoration(border: UnderlineInputBorder(), labelText: label));
   }

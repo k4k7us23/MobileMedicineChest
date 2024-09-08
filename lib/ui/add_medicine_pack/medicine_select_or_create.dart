@@ -100,22 +100,24 @@ class MedicineSelectOrCreateState extends State<MedicineSelectOrCreateWidget> {
 
 class MedicineSelectWidget extends StatefulWidget {
   MedicineStorage _medicineStorage;
+  ValueSetter<Medicine?>? onMedicineSetted = null;
 
-  MedicineSelectWidget(this._medicineStorage, {super.key});
+  MedicineSelectWidget(this._medicineStorage, {super.key, this.onMedicineSetted});
 
   @override
   State<StatefulWidget> createState() {
-    return MedicineSelectWidgetState(_medicineStorage);
+    return MedicineSelectWidgetState(_medicineStorage, onMedicineSetted: this.onMedicineSetted);
   }
 }
 
 class MedicineSelectWidgetState extends State<MedicineSelectWidget> {
   MedicineStorage _medicineStorage;
 
-  MedicineSelectWidgetState(this._medicineStorage);
+  MedicineSelectWidgetState(this._medicineStorage, {this.onMedicineSetted});
 
   List<Medicine>? _medicines = null;
   Medicine? _selectedMedicine = null;
+  ValueSetter<Medicine?>? onMedicineSetted = null;
 
   @override
   void initState() {
@@ -129,6 +131,7 @@ class MedicineSelectWidgetState extends State<MedicineSelectWidget> {
       _medicines = loadedMedicines;
       if (loadedMedicines.isNotEmpty) {
         _selectedMedicine = loadedMedicines.first;
+        onMedicineSetted?.call(_selectedMedicine);
       }
     });
   }
@@ -154,6 +157,7 @@ class MedicineSelectWidgetState extends State<MedicineSelectWidget> {
       onSelected: (value) {
         setState(() {
           _selectedMedicine = value;
+          onMedicineSetted?.call(_selectedMedicine);
         });
       },
       dropdownMenuEntries: _medicines!.map(_mapToMenuEntry).toList(),
