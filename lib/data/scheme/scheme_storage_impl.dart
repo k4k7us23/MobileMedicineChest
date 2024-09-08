@@ -34,12 +34,15 @@ class SchemeStorageImpl extends SchemeStorage {
   Future<int> saveScheme(Scheme scheme) async {
     Database db = await _db;
     var values = {
-      "medicineId ": scheme.medicine.id,
       "oneTakeAmount": scheme.oneTakeAmount,
       "fromTime": scheme.takeSchedule.getFirstTakeDay().millisecondsSinceEpoch,
       "toTime": scheme.takeSchedule.getLastTakeDay().millisecondsSinceEpoch,
       "scheduleParams": _buildScheduleParams(scheme.takeSchedule),
     };
+
+    if (scheme.id != Scheme.NO_ID) {
+      values["id"] = scheme.id; 
+    }
 
     return db.insert(_tableName, values,
         conflictAlgorithm: ConflictAlgorithm.replace);

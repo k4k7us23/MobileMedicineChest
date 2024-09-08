@@ -26,7 +26,7 @@ Future<void> main() async {
   final medicineStorageImpl = MedicineStorageImpl(database);
   final medicinePackStorageImpl = MedicinePackStorageImpl(database);
   final schemeStorageImpl = SchemeStorageImpl(database, medicineStorageImpl);
-  final takeRecordStorageImpl = TakeRecordStorageImpl();
+  final takeRecordStorageImpl = TakeRecordStorageImpl(database, medicinePackStorageImpl);
 
   runApp(MyApp(
     medicinePackStorageImpl: medicinePackStorageImpl,

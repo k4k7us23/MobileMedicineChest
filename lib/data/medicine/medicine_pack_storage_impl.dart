@@ -51,6 +51,30 @@ class MedicinePackStorageImpl implements MedicinePackStorage {
     return result;
   }
 
+  Future<MedicinePack?> _getMedicinePackById(int packId, Transaction txn) async {
+    List<Map<String, Object?>> medicinePacks = await txn.query(_tableName, where: 'id = ?', whereArgs: [packId]);
+    var data = medicinePacks.firstOrNull;
+    if (data != null) {
+      return _convertToMedicinePack(data);
+    } else {
+      return null;
+    }
+  }
+
+
+  Future<void> applyMedicineTake(Map<MedicinePack, double> amount, Transaction txn) async {
+    amount.forEach((pack, packAmount) async {
+      MedicinePack? actualPack = await _getMedicinePackById(pack.id, txn);
+      if (actualPack != null) {
+        double newAmount = actualPack.leftAmount - packAmount;
+        final values = {
+          "left_amount": newAmount
+        };
+        txn.update(_tableName, values, where: "id = ?", whereArgs: [actualPack.id]);
+      }
+    });
+  }
+
   MedicinePack _convertToMedicinePack(Map<String, Object?> data) {
     return MedicinePack(
         id: data['id'] as int,
