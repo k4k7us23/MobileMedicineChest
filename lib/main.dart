@@ -71,9 +71,6 @@ class MyApp extends StatelessWidget {
           takeRecordStorageImpl: takeRecordStorageImpl,
           scheduleProvider: scheduleProvider,
         )
-        //home: TakeCalendarPage(scheduleProvider, medicineStorageImpl, medicinePackStorageImpl, takeRecordStorageImpl),
-        //home: SchemeListPage(medicineStorageImpl, schemeStorageImpl),
-        //home: MedicinesListPage(medicineStorageImpl, medicinePackStorageImpl),
-        );
+      );
   }
 }
