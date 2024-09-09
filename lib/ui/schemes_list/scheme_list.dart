@@ -36,7 +36,8 @@ class _SchemeListPageState extends State<SchemeListPage> {
     setState(() {
       _schemes = null;
     });
-    List<Scheme> loadedSchemes = await _schemeStorage.getActiveOrFutureSchemes();
+    List<Scheme> loadedSchemes =
+        await _schemeStorage.getActiveOrFutureSchemes();
     setState(() {
       _schemes = loadedSchemes;
     });
@@ -45,16 +46,15 @@ class _SchemeListPageState extends State<SchemeListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Расписания приема"),
-      ),
-      body: _mainContent(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => { _onAddClicked() },
-        child: const Icon(Icons.add),
-      )
-    );
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text("Расписания приема"),
+        ),
+        body: _mainContent(),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => {_onAddClicked()},
+          child: const Icon(Icons.add),
+        ));
   }
 
   Widget _mainContent() {
@@ -74,10 +74,12 @@ class _SchemeListPageState extends State<SchemeListPage> {
 
   Widget _scheme(Scheme scheme) {
     return Column(
-       crossAxisAlignment: CrossAxisAlignment.start,
-     
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0), child: _schemeContent(scheme),),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+          child: _schemeContent(scheme),
+        ),
         Divider(),
       ],
     );
@@ -112,17 +114,24 @@ class _SchemeListPageState extends State<SchemeListPage> {
   }
 
   Widget _mainList() {
-    return ListView.builder(
-        itemBuilder: (BuildContext context, int index) {
-          return _scheme(_schemes![index]);
-        },
-        itemCount: _schemes!.length);
+    if (_schemes!.isEmpty) {
+      return _emptyText();
+    } else {
+      return ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            return _scheme(_schemes![index]);
+          },
+          itemCount: _schemes!.length);
+    }
+  }
+
+  Widget _emptyText() {
+    return Center(child: Text("Пока нет созданных схем приема"));
   }
 
   void _onAddClicked() async {
-    bool? newSchemeAdded = await Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => AddSchemePage(_medcineStorage, _schemeStorage))
-    );
+    bool? newSchemeAdded = await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => AddSchemePage(_medcineStorage, _schemeStorage)));
     if (newSchemeAdded == true) {
       _loadPacks();
     }

@@ -57,7 +57,7 @@ class _MedicinesListPageState extends State<MedicinesListPage> {
       ),
       body: child,
       floatingActionButton: FloatingActionButton(
-        onPressed: () => { _onAddClicked() },
+        onPressed: () => {_onAddClicked()},
         child: const Icon(Icons.add),
       ),
     );
@@ -71,22 +71,30 @@ class _MedicinesListPageState extends State<MedicinesListPage> {
   }
 
   Widget _mainList(List<MedicineWithPacks> medicineWithPacks) {
-    return ListView.builder(
-      itemBuilder: (BuildContext context, int index) {
-        var medicineWithPack = medicineWithPacks[index];
-        var packs = medicineWithPack.packs;
+    if (medicineWithPacks.isEmpty) {
+      return _emptyText();
+    } else {
+      return ListView.builder(
+        itemBuilder: (BuildContext context, int index) {
+          var medicineWithPack = medicineWithPacks[index];
+          var packs = medicineWithPack.packs;
 
-        return ExpansionTile(
-          title: _buildTitle(medicineWithPack),
-          expandedAlignment: Alignment.topLeft,
-          tilePadding: EdgeInsetsDirectional.symmetric(horizontal: 8.0),
-          childrenPadding:
-              EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-          children: packs.map(_buildMedicinePackUi).toList(),
-        );
-      },
-      itemCount: medicineWithPacks.length,
-    );
+          return ExpansionTile(
+            title: _buildTitle(medicineWithPack),
+            expandedAlignment: Alignment.topLeft,
+            tilePadding: EdgeInsetsDirectional.symmetric(horizontal: 8.0),
+            childrenPadding:
+                EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+            children: packs.map(_buildMedicinePackUi).toList(),
+          );
+        },
+        itemCount: medicineWithPacks.length,
+      );
+    }
+  }
+
+  Widget _emptyText() {
+    return Center(child: Text("Пока нет созданных лекарств"));
   }
 
   Widget _buildTitle(MedicineWithPacks group) {
@@ -114,7 +122,7 @@ class _MedicinesListPageState extends State<MedicinesListPage> {
   void _onAddClicked() async {
     bool? newMedicineAdded = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) =>  AddMedicinePackFullPage(
+        builder: (context) => AddMedicinePackFullPage(
           medicineStorage: _medicineStorageImpl,
           medicinePackStorage: _medicinePackStorage,
         ),
