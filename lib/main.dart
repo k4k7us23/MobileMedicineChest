@@ -8,6 +8,8 @@ import 'package:medicine_chest/ui/add_sheme/add_scheme.dart';
 import 'package:medicine_chest/ui/dependencies/medicine_pack_storage.dart';
 import 'package:medicine_chest/ui/medicine_list/medicine_list.dart';
 import 'package:medicine_chest/ui/schemes_list/scheme_list.dart';
+import 'package:medicine_chest/ui/take_calendar/take_calendar_day_schedule_provider.dart';
+import 'package:medicine_chest/ui/take_calendar/take_calendar_page.dart';
 import 'package:medicine_chest/ui/take_medicine/take_medicine.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -26,13 +28,15 @@ Future<void> main() async {
   final medicineStorageImpl = MedicineStorageImpl(database);
   final medicinePackStorageImpl = MedicinePackStorageImpl(database);
   final schemeStorageImpl = SchemeStorageImpl(database, medicineStorageImpl);
-  final takeRecordStorageImpl = TakeRecordStorageImpl(database, medicinePackStorageImpl);
+  final takeRecordStorageImpl = TakeRecordStorageImpl(database, medicineStorageImpl, medicinePackStorageImpl);
+  final dayScheduleProvider = TakeCalendarDayScheduleProvider(schemeStorageImpl, takeRecordStorageImpl);
 
   runApp(MyApp(
     medicinePackStorageImpl: medicinePackStorageImpl,
     medicineStorageImpl: medicineStorageImpl,
     schemeStorageImpl: schemeStorageImpl,
     takeRecordStorageImpl:  takeRecordStorageImpl,
+    scheduleProvider: dayScheduleProvider,
     ));
 }
 
@@ -41,6 +45,7 @@ class MyApp extends StatelessWidget {
   final MedicineStorageImpl medicineStorageImpl;
   final SchemeStorageImpl schemeStorageImpl;
   final TakeRecordStorageImpl takeRecordStorageImpl;
+  final TakeCalendarDayScheduleProvider scheduleProvider;
 
   const MyApp(
       {super.key,
@@ -48,6 +53,7 @@ class MyApp extends StatelessWidget {
       required this.medicineStorageImpl,
       required this.schemeStorageImpl,
       required this.takeRecordStorageImpl,
+      required this.scheduleProvider,
       });
 
   @override
@@ -58,7 +64,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlueAccent),
         useMaterial3: true,
       ),
-      home: TakeMedicinePage(medicineStorageImpl, medicinePackStorageImpl, takeRecordStorageImpl),
+      home: TakeCalendarPage(scheduleProvider, medicineStorageImpl, medicinePackStorageImpl, takeRecordStorageImpl),
+      //home: SchemeListPage(medicineStorageImpl, schemeStorageImpl),
+      //home: MedicinesListPage(medicineStorageImpl, medicinePackStorageImpl),
     );
   }
 }

@@ -51,6 +51,13 @@ class MedicinePackStorageImpl implements MedicinePackStorage {
     return result;
   }
 
+  Future<MedicinePack?> getById(int packId) async {
+     final db = await _db;
+     return db.transaction((txn) async {
+        return await _getMedicinePackById(packId, txn);
+     });
+  }
+
   Future<MedicinePack?> _getMedicinePackById(int packId, Transaction txn) async {
     List<Map<String, Object?>> medicinePacks = await txn.query(_tableName, where: 'id = ?', whereArgs: [packId]);
     var data = medicinePacks.firstOrNull;

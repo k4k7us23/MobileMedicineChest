@@ -160,7 +160,7 @@ class AddSchemeState extends State<AddSchemePage> {
       }
 
       TakeSchedule everyDaySchedule = EveryDaySchedule.create(
-          _dayTimeMoments, _beginDateTime, _endDateTime);
+          _dayTimeMoments.map((minutes) => minutes * 60).toList(), _beginDateTime, _endDateTime);
       Scheme scheme =
           Scheme(Scheme.NO_ID, medicine, oneTakeAmount, everyDaySchedule);
 

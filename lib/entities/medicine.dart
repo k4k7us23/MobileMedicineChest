@@ -33,4 +33,14 @@ class Medicine {
   double? dosage = null;
 
   Medicine({required this.id, required this.name, required this.releaseForm});
+
+  String getPrintedName() {
+    String dosagePart = "";
+    if (dosage != null) {
+      dosagePart = "(дозировка ${dosage!.toStringAsFixed(2)})";
+    }
+
+    String label = "$name (форма выпуска: ${releaseForm.name}) $dosagePart";
+    return label;
+  }
 }

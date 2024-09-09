@@ -34,6 +34,7 @@ class SchemeStorageImpl extends SchemeStorage {
   Future<int> saveScheme(Scheme scheme) async {
     Database db = await _db;
     var values = {
+      "medicineId": scheme.medicine.id,
       "oneTakeAmount": scheme.oneTakeAmount,
       "fromTime": scheme.takeSchedule.getFirstTakeDay().millisecondsSinceEpoch,
       "toTime": scheme.takeSchedule.getLastTakeDay().millisecondsSinceEpoch,
@@ -41,7 +42,7 @@ class SchemeStorageImpl extends SchemeStorage {
     };
 
     if (scheme.id != Scheme.NO_ID) {
-      values["id"] = scheme.id; 
+      values["id"] = scheme.id;
     }
 
     return db.insert(_tableName, values,
@@ -70,8 +71,8 @@ class SchemeStorageImpl extends SchemeStorage {
     final List<Map<String, Object?>> schemeMaps = await db.query(_tableName,
         where:
             "($currentTimeInMillis >= fromTime AND $currentTimeInMillis <= toTime) OR $currentTimeInMillis < fromTime",
-            orderBy: "fromTime");
-    
+        orderBy: "fromTime");
+
     List<Scheme> schemes = [];
     for (var shemeMap in schemeMaps) {
       Scheme? scheme = await _createSchemeFromMap(shemeMap);
@@ -96,6 +97,28 @@ class SchemeStorageImpl extends SchemeStorage {
       return null;
     }
 
-    return Scheme(data["id"] as int, medicine, data["oneTakeAmount"] as double, schedule);
+    return Scheme(
+        data["id"] as int, medicine, data["oneTakeAmount"] as double, schedule);
+  }
+
+  @override
+  Future<List<Scheme>> getSchemesForDay(DateTime day) async {
+    final db = await _db;
+
+    final timeInMillis = day.millisecondsSinceEpoch;
+
+    final List<Map<String, Object?>> schemeMaps = await db.query(_tableName,
+        where: "($timeInMillis >= fromTime AND $timeInMillis <= toTime)",
+        orderBy: "fromTime");
+
+    List<Scheme> schemes = [];
+    for (var shemeMap in schemeMaps) {
+      Scheme? scheme = await _createSchemeFromMap(shemeMap);
+      if (scheme != null) {
+        schemes.add(scheme);
+      }
+    }
+
+    return schemes;
   }
 }
