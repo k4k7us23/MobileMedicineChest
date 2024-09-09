@@ -4,4 +4,6 @@ abstract class SchemeStorage {
   Future<int> saveScheme(Scheme scheme);
 
   Future<List<Scheme>> getActiveOrFutureSchemes();
+
+  Future<List<Scheme>> getSchemesForDay(DateTime day);
 }
