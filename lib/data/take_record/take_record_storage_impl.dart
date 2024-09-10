@@ -64,7 +64,8 @@ class TakeRecordStorageImpl extends TakeRecordStorage {
   Future<Map<MedicinePack, double>> _getTakeAmountByJson(String json) async {
     Map<String, dynamic> decodedMap = jsonDecode(json);
     Map<MedicinePack, double> result = {};
-    decodedMap.forEach((key, value) async {
+    for (var key in decodedMap.keys) {
+      var value = decodedMap[key];
       var packId = int.tryParse(key);
       if (packId != null) {
         MedicinePack? medicinePack = await _medicinePackStorageImpl.getById(packId);
@@ -74,7 +75,7 @@ class TakeRecordStorageImpl extends TakeRecordStorage {
           }
         }
       }
-    });
+    }
     return result;
   }
 
