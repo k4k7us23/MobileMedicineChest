@@ -70,7 +70,8 @@ class MedicinePackStorageImpl implements MedicinePackStorage {
 
 
   Future<void> applyMedicineTake(Map<MedicinePack, double> amount, Transaction txn) async {
-    amount.forEach((pack, packAmount) async {
+    for (var pack in amount.keys) {
+      var packAmount = amount[pack]!;
       MedicinePack? actualPack = await _getMedicinePackById(pack.id, txn);
       if (actualPack != null) {
         double newAmount = actualPack.leftAmount - packAmount;
@@ -79,7 +80,7 @@ class MedicinePackStorageImpl implements MedicinePackStorage {
         };
         txn.update(_tableName, values, where: "id = ?", whereArgs: [actualPack.id]);
       }
-    });
+    }
   }
 
   MedicinePack _convertToMedicinePack(Map<String, Object?> data) {
