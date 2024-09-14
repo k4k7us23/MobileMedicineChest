@@ -12,6 +12,7 @@ class MedicinePackStorageImpl implements MedicinePackStorage {
         medicine_id INTEGER,
         left_amount REAL,
         expiration_time INTEGER,
+        active INTEGER DEFAULT 1,
         FOREIGN KEY(medicine_id) REFERENCES medicine(id)
       );""");
   }
@@ -41,7 +42,7 @@ class MedicinePackStorageImpl implements MedicinePackStorage {
   Future<List<MedicinePack>> getMedicinePacksByMedicine(Medicine medicine) async {
     final db = await _db;
     final List<Map<String, Object?>> medicinePacks = await db
-        .query(_tableName, where: 'medicine_id = ?', whereArgs: [medicine.id]);
+        .query(_tableName, where: 'medicine_id = ? AND active = 1', whereArgs: [medicine.id]);
     List<MedicinePack> result = [];
     for (var data in medicinePacks) {
       var pack = _convertToMedicinePack(data);
@@ -89,5 +90,14 @@ class MedicinePackStorageImpl implements MedicinePackStorage {
         leftAmount: data['left_amount'] as double,
         expirationTime: DateTime.fromMillisecondsSinceEpoch(
             data['expiration_time'] as int));
+  }
+  
+  @override
+  Future<void> deleteMedicinePack(MedicinePack pack) async {
+    final db = await _db;
+    final values = {
+      "active": 0,
+    };
+    await db.update(_tableName, values, where: "id = ?", whereArgs: [pack.id]) ;
   }
 }

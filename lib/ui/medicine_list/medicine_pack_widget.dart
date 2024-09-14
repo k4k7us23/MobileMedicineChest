@@ -1,24 +1,28 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:medicine_chest/entities/medicine_pack.dart';
+import 'package:medicine_chest/ui/shared/delete_or_edit_dialog.dart';
 
 class MedicinePackWidget extends StatefulWidget {
   final MedicinePack _pack;
+  Function(MedicinePack pack)? onDelete = null;
+  Function(MedicinePack pack)? onEdit = null;
 
-  MedicinePackWidget(this._pack, {super.key});
+  MedicinePackWidget(this._pack, {this.onDelete, this.onEdit, super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _MedicinePackState(_pack);
+    return _MedicinePackState(_pack, onDelete: onDelete, onEdit: onEdit);
   }
 }
 
 class _MedicinePackState extends State<MedicinePackWidget> {
   static final Duration _INVALIDATE_EXPIRATION_INTERVAL = Duration(seconds: 30);
   final MedicinePack _pack;
+  Function(MedicinePack pack)? onDelete = null;
+  Function(MedicinePack pack)? onEdit = null;
 
-  _MedicinePackState(this._pack);
+  _MedicinePackState(this._pack, {this.onDelete, this.onEdit});
 
   Timer? _timer;
   var _isExpired = false;
@@ -47,39 +51,51 @@ class _MedicinePackState extends State<MedicinePackWidget> {
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
-            "Упаковка #${_pack.getFormattedNumber()}",
-            style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: colorScheme.secondary),
-          ),
-          _buildExpirationTime(context)
-        ]),
-        Text("Остаток: ${_pack.leftAmount.toStringAsFixed(2)}"),
-      ],
-    );
+    return InkWell(
+        onTap: _onTap,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(
+                "Упаковка #${_pack.getFormattedNumber()}",
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.secondary),
+              ),
+              _buildExpirationTime(context)
+            ]),
+            Text("Остаток: ${_pack.leftAmount.toStringAsFixed(2)}"),
+          ],
+        ));
+  }
+
+  void _onTap() {
+    showDeleteOrEditDialog(context, onEdit: () {
+      onEdit?.call(_pack);
+    }, onDelete: () {
+      onDelete?.call(_pack);
+    });
   }
 
   Widget _buildExpirationTime(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     if (_isExpired) {
-      return Padding(padding: EdgeInsets.only(left: 8.0), child:   Row(
-        children: [
-          Icon(
-            Icons.warning,
-            color: colorScheme.error,
-          ),
-          Padding(
-              padding: EdgeInsets.only(left: 8.0),
-              child: _buildExpiredText(context)),
-        ],
-      ));
+      return Padding(
+          padding: EdgeInsets.only(left: 8.0),
+          child: Row(
+            children: [
+              Icon(
+                Icons.warning,
+                color: colorScheme.error,
+              ),
+              Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child: _buildExpiredText(context)),
+            ],
+          ));
     } else {
       return Text("Срок годности: ${_pack.getFormattedExpirationTime()}");
     }

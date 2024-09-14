@@ -102,7 +102,7 @@ class _MedicinesListPageState extends State<MedicinesListPage> {
   }
 
   Widget _buildMedicinePackUi(MedicinePack pack) {
-    return MedicinePackWidget(pack);
+    return MedicinePackWidget(pack, onDelete: _onMedicineDelete);
   }
 
   Future<List<MedicineWithPacks>> _getMedicineWithPacks() async {
@@ -131,5 +131,45 @@ class _MedicinesListPageState extends State<MedicinesListPage> {
     if (newMedicineAdded == true) {
       _loadPacks();
     }
+  }
+
+  void _onMedicineDelete(MedicinePack pack) {
+    String medicineName = pack.medicine?.name ?? "";
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Удаление лекарства'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Вы собираетесь удалить упаковку#${pack.getFormattedNumber()} $medicineName', style: TextStyle(fontSize: 18),),
+                Text('Продолжить?', style: TextStyle(fontSize: 18)),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Отмена'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Продолжить'),
+              onPressed: () {
+                  _onMedicineDeleteConfirmed(pack);
+                  Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _onMedicineDeleteConfirmed(MedicinePack pack) async {
+    await _medicinePackStorage.deleteMedicinePack(pack);
+    _loadPacks();
   }
 }
