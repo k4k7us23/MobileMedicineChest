@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:medicine_chest/data/barcode_finder/barcode_finder.dart';
 import 'package:medicine_chest/entities/medicine.dart';
 import 'package:medicine_chest/ui/dependencies/medicine_storage.dart';
+import 'package:medicine_chest/ui/scan_medicine_pack/medicine_pack_scanner.dart';
 import 'package:medicine_chest/ui/shared/medicine_release_form_selector.dart';
 
 enum _Type { _select, _create }
@@ -102,11 +105,13 @@ class MedicineSelectWidget extends StatefulWidget {
   MedicineStorage _medicineStorage;
   ValueSetter<Medicine?>? onMedicineSetted = null;
 
-  MedicineSelectWidget(this._medicineStorage, {super.key, this.onMedicineSetted});
+  MedicineSelectWidget(this._medicineStorage,
+      {super.key, this.onMedicineSetted});
 
   @override
   State<StatefulWidget> createState() {
-    return MedicineSelectWidgetState(_medicineStorage, onMedicineSetted: this.onMedicineSetted);
+    return MedicineSelectWidgetState(_medicineStorage,
+        onMedicineSetted: this.onMedicineSetted);
   }
 }
 
@@ -173,7 +178,7 @@ class MedicineSelectWidgetState extends State<MedicineSelectWidget> {
     if (_selectedMedicine == null) {
       final snackBar = SnackBar(
         content: Text('Необходимо выбрать лекарство.'),
-        duration: Duration(seconds: 2), 
+        duration: Duration(seconds: 2),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return null;
@@ -205,6 +210,7 @@ class MedicineCreateWidgetState extends State<MedicineCreateWidget> {
         key: _formKey,
         child: Column(
           children: [
+            _scannerButton(context),
             TextFormField(
                 validator: (value) {
                   var valueWithoutSpaces = value?.replaceAll(" ", "");
@@ -247,6 +253,33 @@ class MedicineCreateWidgetState extends State<MedicineCreateWidget> {
                     labelText: 'Дозировка (действующее вещество)')),
           ],
         ));
+  }
+
+  Widget _scannerButton(BuildContext context) {
+    return Row(children: [
+      Expanded(
+          child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              child: OutlinedButton(
+                  onPressed: _onOpenScannerPressed,
+                  child: Text("Сканировать штрих-код"))))
+    ]);
+  }
+
+  void _onOpenScannerPressed() async {
+    BarcodeFinderResult? result = await Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => MedicinePackScannerPage())
+    );
+    if (result is Success) {
+      _nameController.text = result.medicineName;
+    } else if (result is Error) {
+      Fluttertoast.showToast(
+          msg: result.message,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
   }
 
   Medicine? collectOnSave() {
