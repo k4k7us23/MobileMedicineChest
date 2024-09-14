@@ -29,3 +29,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 **/.DS_Store
+
+
+/lib/config/secrets.dart
