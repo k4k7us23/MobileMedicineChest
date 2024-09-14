@@ -121,4 +121,10 @@ class SchemeStorageImpl extends SchemeStorage {
 
     return schemes;
   }
+  
+  @override
+  Future<void> deleteScheme(Scheme scheme) async {
+    final db = await _db;
+    await db.delete(_tableName, where: "id = ?", whereArgs: [scheme.id]);
+  }
 }

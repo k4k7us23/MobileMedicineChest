@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:medicine_chest/entities/take_record.dart';
+import 'package:medicine_chest/ui/dependencies/take_record_storage.dart';
 import 'package:medicine_chest/ui/take_calendar/take_calendar_day_schedule_provider.dart';
 import 'package:medicine_chest/ui/take_calendar/take_calendar_item.dart';
 import 'package:medicine_chest/ui/take_calendar/take_calendar_medicine_taken_item.dart';
@@ -24,12 +26,13 @@ class TakeCalendarDayScheduleWidget extends StatefulWidget{
 
   final CurrentDayModel currentDayModel;
   final TakeCalendarDayScheduleProvider _provider;
+  final TakeRecordStorage _takeRecordStorage;
 
-  TakeCalendarDayScheduleWidget(this.currentDayModel, this._provider, {super.key});
+  TakeCalendarDayScheduleWidget(this.currentDayModel, this._provider, this._takeRecordStorage, {super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _TakeCalendarDayScheduleState(currentDayModel, _provider);
+    return _TakeCalendarDayScheduleState(currentDayModel, _provider, _takeRecordStorage);
   }
 }
 
@@ -37,8 +40,9 @@ class _TakeCalendarDayScheduleState extends State<TakeCalendarDayScheduleWidget>
   
   final CurrentDayModel _currentDayModel;
   final TakeCalendarDayScheduleProvider _provider;
+  final TakeRecordStorage _takeRecordStorage;
 
-  _TakeCalendarDayScheduleState(this._currentDayModel, this._provider);
+  _TakeCalendarDayScheduleState(this._currentDayModel, this._provider, this._takeRecordStorage);
 
   List<TakeCalendarItem>? _items = null;
 
@@ -86,7 +90,10 @@ class _TakeCalendarDayScheduleState extends State<TakeCalendarDayScheduleWidget>
           ],
         );
       } else if (item is MedicineTaken) {
-        return Column(children: [TakeCalendarMedicineTakenItemWidget(item), Divider()]);
+        return Column(children: [
+          TakeCalendarMedicineTakenItemWidget(item, onDeleteConfirmed: onTakeRecordDeleteConfirmed,),
+          Divider()
+        ]);
       } else {
         throw Exception("Unknown TakeCalendarItem type");
       }
@@ -99,6 +106,11 @@ class _TakeCalendarDayScheduleState extends State<TakeCalendarDayScheduleWidget>
 
   Widget _loader() {
     return CircularProgressIndicator(value: null);
+  }
+
+  void onTakeRecordDeleteConfirmed(TakeRecord takeRecord) async {
+    await _takeRecordStorage.deleteTakeRecord(takeRecord);
+    loadItems();
   }
 
 }

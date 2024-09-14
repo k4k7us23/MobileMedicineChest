@@ -7,6 +7,7 @@ import 'package:medicine_chest/ui/dependencies/medicine_storage.dart';
 import 'package:medicine_chest/ui/medicine_list/medicine_pack_widget.dart';
 import 'package:medicine_chest/ui/medicine_list/medicine_packs_title_widget.dart';
 import 'package:medicine_chest/ui/medicine_list/medicine_with_packs.dart';
+import 'package:medicine_chest/ui/shared/delete_confitmation_dialog.dart';
 
 class MedicinesListPage extends StatefulWidget {
   final MedicinePackStorage _medicinePackStorage;
@@ -102,7 +103,7 @@ class _MedicinesListPageState extends State<MedicinesListPage> {
   }
 
   Widget _buildMedicinePackUi(MedicinePack pack) {
-    return MedicinePackWidget(pack);
+    return MedicinePackWidget(pack, onDelete: _onMedicineDelete);
   }
 
   Future<List<MedicineWithPacks>> _getMedicineWithPacks() async {
@@ -131,5 +132,21 @@ class _MedicinesListPageState extends State<MedicinesListPage> {
     if (newMedicineAdded == true) {
       _loadPacks();
     }
+  }
+
+  void _onMedicineDelete(MedicinePack pack) {
+    String medicineName = pack.medicine?.name ?? "";
+    showDeleteConfirmationDialog(context,
+        title: 'Удаление лекарства',
+        bodyText:
+            'Вы собираетесь удалить упаковку#${pack.getFormattedNumber()} $medicineName',
+        onConfirmed: () {
+      _onMedicineDeleteConfirmed(pack);
+    });
+  }
+
+  void _onMedicineDeleteConfirmed(MedicinePack pack) async {
+    await _medicinePackStorage.deleteMedicinePack(pack);
+    _loadPacks();
   }
 }

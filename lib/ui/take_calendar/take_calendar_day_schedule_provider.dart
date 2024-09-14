@@ -55,7 +55,7 @@ class TakeCalendarDayScheduleProvider {
     double totalTaken = 0;
     for (var takeRecord in takeRecords) {
       var takeTime = takeRecord.takeTime;
-      var diff = takeTime.difference(shouldTakeMoment);
+      var diff = takeTime.difference(shouldTakeMoment).abs();
       if (diff.compareTo(VALID_TIME_DIFFERENCE) <= 0) {
         var curTakeAmount = leftAmountByTakeId[takeRecord.id] ?? 0.0;
         var curRemoveAmount = min(curTakeAmount, needAmount - totalTaken);

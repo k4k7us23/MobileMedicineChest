@@ -5,6 +5,8 @@ import 'package:medicine_chest/entities/scheme.dart';
 import 'package:medicine_chest/ui/add_sheme/add_scheme.dart';
 import 'package:medicine_chest/ui/dependencies/medicine_storage.dart';
 import 'package:medicine_chest/ui/dependencies/scheme_storage.dart';
+import 'package:medicine_chest/ui/shared/delete_confitmation_dialog.dart';
+import 'package:medicine_chest/ui/shared/delete_or_edit_dialog.dart';
 
 class SchemeListPage extends StatefulWidget {
   MedicineStorage _medicineStorage;
@@ -29,10 +31,10 @@ class _SchemeListPageState extends State<SchemeListPage> {
   @override
   void initState() {
     super.initState();
-    _loadPacks();
+    _loadSchemes();
   }
 
-  void _loadPacks() async {
+  void _loadSchemes() async {
     setState(() {
       _schemes = null;
     });
@@ -73,7 +75,7 @@ class _SchemeListPageState extends State<SchemeListPage> {
   }
 
   Widget _scheme(Scheme scheme) {
-    return Column(
+    return InkWell(child:  Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
@@ -82,7 +84,34 @@ class _SchemeListPageState extends State<SchemeListPage> {
         ),
         Divider(),
       ],
+    ), onTap: (){
+      _onSchemeClicked(scheme);
+    },);
+  }
+
+  void _onSchemeClicked(Scheme scheme) {
+    showDeleteOrEditDialog(
+      context,
+      onDelete: () {
+        _onSchemeDeleteClicked(scheme);
+      }
     );
+  }
+
+  void _onSchemeDeleteClicked(Scheme scheme) {
+    showDeleteConfirmationDialog(context,
+        title: "Удаление схемы приема лекарства",
+        bodyText:
+            "Вы собираетесь удалить схему приема ${scheme.medicine.name}",
+       onConfirmed: () {
+           _onSchemeDeleteConfirmed(scheme);
+       }
+    );
+  }
+
+  void _onSchemeDeleteConfirmed(Scheme scheme) async {
+    await _schemeStorage.deleteScheme(scheme);  
+    _loadSchemes();
   }
 
   Widget _schemeContent(Scheme scheme) {
@@ -133,7 +162,7 @@ class _SchemeListPageState extends State<SchemeListPage> {
     bool? newSchemeAdded = await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => AddSchemePage(_medcineStorage, _schemeStorage)));
     if (newSchemeAdded == true) {
-      _loadPacks();
+      _loadSchemes();
     }
   }
 }

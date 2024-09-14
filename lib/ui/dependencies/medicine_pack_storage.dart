@@ -6,4 +6,6 @@ abstract class MedicinePackStorage {
   Future<int> saveMedicinePack(MedicinePack pack);
 
   Future<List<MedicinePack>> getMedicinePacksByMedicine(Medicine medicine);
+
+  Future<void> deleteMedicinePack(MedicinePack pack);
 }
