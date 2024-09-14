@@ -272,14 +272,19 @@ class MedicineCreateWidgetState extends State<MedicineCreateWidget> {
     );
     if (result is Success) {
       _nameController.text = result.medicineName;
+      _showToast("Лекарство найдено");
     } else if (result is Error) {
-      Fluttertoast.showToast(
-          msg: result.message,
+      _showToast(result.message);
+    }
+  }
+
+  void _showToast(String msg) {
+    Fluttertoast.showToast(
+          msg: msg,
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           textColor: Colors.white,
           fontSize: 16.0);
-    }
   }
 
   Medicine? collectOnSave() {

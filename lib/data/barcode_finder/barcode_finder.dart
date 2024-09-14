@@ -24,7 +24,7 @@ class BarcodeFinder {
   Future<BarcodeFinderResult> find(String barcode) async {
     String? productName;
     try {
-        productName = await _productNameFinder.getProductName(barcode);
+        productName = await _productNameFinder.getProductName(barcode).timeout(Duration(seconds: 10));
     } catch (e) {
       return Error("Ошибка при поиске данных по штрих коду", cause: e);
     }
@@ -34,7 +34,7 @@ class BarcodeFinder {
 
     String? medicineName;
     try {
-      medicineName = await _medicineNameExtractor.extractMedicineName(productName);
+      medicineName = await _medicineNameExtractor.extractMedicineName(productName).timeout(Duration(seconds: 15));
     } catch (e) {
       return Error("Ошибка при извлечении названия лекарства", cause: e);
     }

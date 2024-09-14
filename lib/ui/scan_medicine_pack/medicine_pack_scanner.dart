@@ -49,7 +49,7 @@ class _MedicinePackScannerPageState extends State<MedicinePackScannerPage> {
       content: Row(
         children: [
           CircularProgressIndicator(),
-          Container(margin: EdgeInsets.only(left: 7),child:Text("Получение информации о лекарстве" )),
+          Container(margin: EdgeInsets.only(left: 7),child:Text("Идет загрузка" )),
         ],),
     );
     showDialog(barrierDismissible: false,
