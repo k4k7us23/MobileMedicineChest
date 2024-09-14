@@ -15,7 +15,8 @@ class TakeRecordStorageImpl extends TakeRecordStorage {
   MedicinePackStorageImpl _medicinePackStorageImpl;
   MedicineStorageImpl _medicineStorageImpl;
 
-  TakeRecordStorageImpl(this._db, this._medicineStorageImpl, this._medicinePackStorageImpl);
+  TakeRecordStorageImpl(
+      this._db, this._medicineStorageImpl, this._medicinePackStorageImpl);
 
   static onDatabaseCreate(Database db) {
     db.execute("""
@@ -68,7 +69,8 @@ class TakeRecordStorageImpl extends TakeRecordStorage {
       var value = decodedMap[key];
       var packId = int.tryParse(key);
       if (packId != null) {
-        MedicinePack? medicinePack = await _medicinePackStorageImpl.getById(packId);
+        MedicinePack? medicinePack =
+            await _medicinePackStorageImpl.getById(packId);
         if (medicinePack != null) {
           if (value is double) {
             result[medicinePack] = value;
@@ -104,16 +106,36 @@ class TakeRecordStorageImpl extends TakeRecordStorage {
   }
 
   Future<TakeRecord?> _convertToTakeRecord(Map<String, Object?> data) async {
-    var medicine = await _medicineStorageImpl.getMedicineById(data["medicineId"] as int);
+    var medicine =
+        await _medicineStorageImpl.getMedicineById(data["medicineId"] as int);
     if (medicine == null) {
       return null;
     } else {
-      final takeAmountByPack = await _getTakeAmountByJson(data["takeAmountByPackJson"] as String);
+      final takeAmountByPack =
+          await _getTakeAmountByJson(data["takeAmountByPackJson"] as String);
 
       return TakeRecord(
-        data["id"] as int,
-        medicine,
-        DateTime.fromMillisecondsSinceEpoch(data["takeTime"] as int), takeAmountByPack);
+          data["id"] as int,
+          medicine,
+          DateTime.fromMillisecondsSinceEpoch(data["takeTime"] as int),
+          takeAmountByPack);
     }
+  }
+
+  @override
+  Future<void> deleteTakeRecord(TakeRecord record) async {
+    Database db = await _db;
+    return db.transaction((txn) async {
+      await _medicinePackStorageImpl.applyMedicineTake(invertTakeAmountByPack(record.takeAmountByPack), txn);
+      await txn.delete(_tableName, where: "id = ?", whereArgs: [record.id]);
+    });
+  }
+
+  Map<MedicinePack, double> invertTakeAmountByPack(Map<MedicinePack, double> takeAmountByPack) {
+    Map<MedicinePack, double> result = {};
+    for (var pack in takeAmountByPack.keys) {
+      result[pack] = -takeAmountByPack[pack]!;
+    }
+    return result;
   }
 }

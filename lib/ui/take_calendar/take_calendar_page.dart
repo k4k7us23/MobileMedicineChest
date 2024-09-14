@@ -74,7 +74,7 @@ class TakeCalendarPageState extends State<TakeCalendarPage> {
   }
 
   Widget _dayItemsList() {
-    return TakeCalendarDayScheduleWidget(_currentDayModel, _scheduleProvider); // todo receive provider from outside
+    return TakeCalendarDayScheduleWidget(_currentDayModel, _scheduleProvider, _takeRecordStorage); 
   }
 
   void _onAddClicked() async {

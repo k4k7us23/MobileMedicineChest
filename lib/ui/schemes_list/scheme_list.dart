@@ -31,10 +31,10 @@ class _SchemeListPageState extends State<SchemeListPage> {
   @override
   void initState() {
     super.initState();
-    _loadPacks();
+    _loadSchemes();
   }
 
-  void _loadPacks() async {
+  void _loadSchemes() async {
     setState(() {
       _schemes = null;
     });
@@ -111,7 +111,7 @@ class _SchemeListPageState extends State<SchemeListPage> {
 
   void _onSchemeDeleteConfirmed(Scheme scheme) async {
     await _schemeStorage.deleteScheme(scheme);  
-    _loadPacks();
+    _loadSchemes();
   }
 
   Widget _schemeContent(Scheme scheme) {
@@ -162,7 +162,7 @@ class _SchemeListPageState extends State<SchemeListPage> {
     bool? newSchemeAdded = await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => AddSchemePage(_medcineStorage, _schemeStorage)));
     if (newSchemeAdded == true) {
-      _loadPacks();
+      _loadSchemes();
     }
   }
 }
