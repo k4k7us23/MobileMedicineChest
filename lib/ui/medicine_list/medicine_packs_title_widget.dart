@@ -18,11 +18,11 @@ class MedicinePacksTitleWidget extends StatelessWidget {
       children: [
         Text(
           medicine.name,
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: colorScheme.primary),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: colorScheme.primary),
         ),
         Text(
           'Остаток: $leftAmount',
-          style: TextStyle(fontSize: 18),
+          style: TextStyle(fontSize: 16),
         ),
       ],
     );
