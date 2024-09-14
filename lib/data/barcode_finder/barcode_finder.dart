@@ -36,7 +36,7 @@ class BarcodeFinder {
     try {
       medicineName = await _medicineNameExtractor.extractMedicineName(productName);
     } catch (e) {
-      return Error("Ошибка при извлечении названия лекарства");
+      return Error("Ошибка при извлечении названия лекарства", cause: e);
     }
 
     if (medicineName == null) {
