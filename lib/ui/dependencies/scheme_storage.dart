@@ -6,4 +6,6 @@ abstract class SchemeStorage {
   Future<List<Scheme>> getActiveOrFutureSchemes();
 
   Future<List<Scheme>> getSchemesForDay(DateTime day);
+
+  Future<void> deleteScheme(Scheme scheme);
 }

@@ -7,6 +7,7 @@ import 'package:medicine_chest/ui/dependencies/medicine_storage.dart';
 import 'package:medicine_chest/ui/medicine_list/medicine_pack_widget.dart';
 import 'package:medicine_chest/ui/medicine_list/medicine_packs_title_widget.dart';
 import 'package:medicine_chest/ui/medicine_list/medicine_with_packs.dart';
+import 'package:medicine_chest/ui/shared/delete_confitmation_dialog.dart';
 
 class MedicinesListPage extends StatefulWidget {
   final MedicinePackStorage _medicinePackStorage;
@@ -135,37 +136,13 @@ class _MedicinesListPageState extends State<MedicinesListPage> {
 
   void _onMedicineDelete(MedicinePack pack) {
     String medicineName = pack.medicine?.name ?? "";
-    showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Удаление лекарства'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Вы собираетесь удалить упаковку#${pack.getFormattedNumber()} $medicineName', style: TextStyle(fontSize: 18),),
-                Text('Продолжить?', style: TextStyle(fontSize: 18)),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Отмена'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Продолжить'),
-              onPressed: () {
-                  _onMedicineDeleteConfirmed(pack);
-                  Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+    showDeleteConfirmationDialog(context,
+        title: 'Удаление лекарства',
+        bodyText:
+            'Вы собираетесь удалить упаковку#${pack.getFormattedNumber()} $medicineName',
+        onConfirmed: () {
+      _onMedicineDeleteConfirmed(pack);
+    });
   }
 
   void _onMedicineDeleteConfirmed(MedicinePack pack) async {
