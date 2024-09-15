@@ -81,6 +81,7 @@ class MedicineStorageImpl implements MedicineStorage {
       return Medicine(
           id: data["id"] as int,
           name: data["name"] as String,
+          dosage: data["dosage"] as double?,
           releaseForm: releaseForm);
     } else {
       return null;
