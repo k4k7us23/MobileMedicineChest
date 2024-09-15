@@ -127,4 +127,19 @@ class SchemeStorageImpl extends SchemeStorage {
     final db = await _db;
     await db.delete(_tableName, where: "id = ?", whereArgs: [scheme.id]);
   }
+  
+  @override
+  Future<Scheme?> getById(int id) async {
+    final db = await _db;
+
+    final List<Map<String, Object?>> schemeMaps = await db.query(_tableName,
+        where: "id = ?", whereArgs: [id]);
+    
+    Map<String, Object?>? schemeData = schemeMaps.firstOrNull;
+    if (schemeData == null) {
+      return null;
+    } else {
+      return await _createSchemeFromMap(schemeData);
+    }
+  }
 }

@@ -4,11 +4,15 @@ import 'package:medicine_chest/entities/medicine_pack.dart';
 import 'package:medicine_chest/ui/shared/date_picker_text_field.dart';
 
 class MedicinePackCreateWidget extends StatefulWidget {
-  const MedicinePackCreateWidget({super.key});
+
+  final double? initialAmount;
+  final DateTime? initalExpirationTime; 
+
+  const MedicinePackCreateWidget({super.key, this.initialAmount, this.initalExpirationTime});
 
   @override
   State<StatefulWidget> createState() {
-    return MedicinePackCreateWidgetState();
+    return MedicinePackCreateWidgetState(initialAmount, initalExpirationTime);
   }
 }
 
@@ -17,6 +21,27 @@ class MedicinePackCreateWidgetState extends State<MedicinePackCreateWidget> {
   final _amountController = TextEditingController();
 
   DateTime _expirationTime = DateTime.now().add(Duration(days: 365));
+
+  final double? _initialAmount;
+  final DateTime? _initalExpirationTime; 
+
+  MedicinePackCreateWidgetState(this._initialAmount, this._initalExpirationTime);
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (_initialAmount != null) {
+      _amountController.text = _initialAmount.toStringAsFixed(2);
+    }
+
+    if (_initalExpirationTime != null) {
+      setState(() {
+        _expirationTime = _initalExpirationTime;
+      });
+    }
+  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +62,10 @@ class MedicinePackCreateWidgetState extends State<MedicinePackCreateWidget> {
                     var amountLeft = parseAmountLeft(value);
                     if (amountLeft == null) {
                       return "Остаток должен быть числом";
+                    }
+
+                    if (amountLeft <= 0) {
+                      return "Остаток должен быть больше нуля";
                     }
                     return null;
                   },

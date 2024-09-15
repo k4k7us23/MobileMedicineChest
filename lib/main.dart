@@ -24,7 +24,7 @@ Future<void> main() async {
   }, version: DatabaseCreator.DATABASE_VERSION);
 
   final medicineStorageImpl = MedicineStorageImpl(database);
-  final medicinePackStorageImpl = MedicinePackStorageImpl(database);
+  final medicinePackStorageImpl = MedicinePackStorageImpl(database, medicineStorageImpl);
   final schemeStorageImpl = SchemeStorageImpl(database, medicineStorageImpl);
   final takeRecordStorageImpl = TakeRecordStorageImpl(
       database, medicineStorageImpl, medicinePackStorageImpl);

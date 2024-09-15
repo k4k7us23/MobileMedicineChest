@@ -70,10 +70,8 @@ class MedicineStorageImpl implements MedicineStorage {
   Future<List<Medicine>> getMedicines() async {
     final db = await _db;
 
-    final List<Map<String, Object?>> medicineMaps = await db.query(
-      _tableName,
-       orderBy: 'name ASC'
-    );
+    final List<Map<String, Object?>> medicineMaps =
+        await db.query(_tableName, orderBy: 'name ASC');
     return medicineMaps.map(_convertToMedicine).nonNulls.toList();
   }
 
@@ -83,6 +81,7 @@ class MedicineStorageImpl implements MedicineStorage {
       return Medicine(
           id: data["id"] as int,
           name: data["name"] as String,
+          dosage: data["dosage"] as double?,
           releaseForm: releaseForm);
     } else {
       return null;
@@ -97,22 +96,30 @@ class MedicineStorageImpl implements MedicineStorage {
         await db.rawQuery('SELECT COUNT(*) FROM $_tableName'));
     return count != null && count > 0;
   }
-  
-  @override
-  Future<Medicine?> getMedicineById(int id) async {
-    final db = await _db;
 
-    final List<Map<String, Object?>> medicineMaps = await db.query(
-      _tableName,
-      where: "id = ?",
-      whereArgs: [id],
-    );
+  @override
+  Future<Medicine?> getMedicineById(int id, {Transaction? txn = null}) async {
+    List<Map<String, Object?>> medicineMaps;
+    if (txn == null) {
+      final db = await _db;
+      medicineMaps = await db.query(
+        _tableName,
+        where: "id = ?",
+        whereArgs: [id],
+      );
+    } else {
+      medicineMaps = await txn.query(
+        _tableName,
+        where: "id = ?",
+        whereArgs: [id],
+      );
+    }
 
     if (medicineMaps.isEmpty) {
       return null;
     } else {
-        Map<String, Object?> data = medicineMaps[0];
-        return _convertToMedicine(data);
+      Map<String, Object?> data = medicineMaps[0];
+      return _convertToMedicine(data);
     }
   }
 }

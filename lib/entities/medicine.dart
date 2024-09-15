@@ -1,10 +1,4 @@
-enum MedicineReleaseForm {
-  tablet,
-  injection,
-  liquid,
-  powder,
-  other
-}
+enum MedicineReleaseForm { tablet, injection, liquid, powder, other }
 
 extension MedicineReleaseFormName on MedicineReleaseForm {
   String get name {
@@ -23,7 +17,6 @@ extension MedicineReleaseFormName on MedicineReleaseForm {
   }
 }
 
-
 class Medicine {
   static int NO_ID = -1;
 
@@ -32,15 +25,27 @@ class Medicine {
   MedicineReleaseForm releaseForm;
   double? dosage = null;
 
-  Medicine({required this.id, required this.name, required this.releaseForm});
+  Medicine({required this.id, required this.name, required this.releaseForm, this.dosage});
 
   String getPrintedName() {
     String dosagePart = "";
     if (dosage != null) {
-      dosagePart = "(дозировка ${dosage!.toStringAsFixed(2)})";
+      dosagePart = "\nДозировка ${dosage!.toStringAsFixed(2)}";
     }
 
     String label = "$name (форма выпуска: ${releaseForm.name}) $dosagePart";
     return label;
   }
+
+  @override
+  bool operator ==(Object other) {
+    return other is Medicine &&
+        other.id == id &&
+        other.name == name &&
+        other.releaseForm == releaseForm &&
+        other.dosage == dosage;
+  }
+
+  @override
+  int get hashCode => id;
 }

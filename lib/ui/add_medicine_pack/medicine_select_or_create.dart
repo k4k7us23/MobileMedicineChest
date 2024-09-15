@@ -174,6 +174,13 @@ class MedicineSelectWidgetState extends State<MedicineSelectWidget> {
     return DropdownMenuEntry(value: medicine, label: medicine.getPrintedName());
   }
 
+  void setMedicine(Medicine medicine) {
+    setState(() {
+      _selectedMedicine = medicine;
+      onMedicineSetted?.call(_selectedMedicine);
+    });
+  }
+
   Medicine? collectOnSave(BuildContext context) {
     if (_selectedMedicine == null) {
       final snackBar = SnackBar(
@@ -188,11 +195,15 @@ class MedicineSelectWidgetState extends State<MedicineSelectWidget> {
 }
 
 class MedicineCreateWidget extends StatefulWidget {
-  const MedicineCreateWidget({super.key});
+  final Medicine? initialMedicine;
+  final bool showScannerButton;
+
+  const MedicineCreateWidget(
+      {this.initialMedicine, this.showScannerButton = true, super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return MedicineCreateWidgetState();
+    return MedicineCreateWidgetState(initialMedicine, showScannerButton);
   }
 }
 
@@ -203,6 +214,28 @@ class MedicineCreateWidgetState extends State<MedicineCreateWidget> {
   final TextEditingController _dosageContoller = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+
+  final Medicine? medicine;
+  final bool showScannerButton;
+
+  MedicineCreateWidgetState(this.medicine, this.showScannerButton);
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (medicine != null) {
+      _nameController.text = medicine!.name;
+      final dosage = medicine?.dosage;
+      if (dosage != null) {
+        _dosageContoller.text = dosage.toStringAsFixed(2);
+      }
+
+      setState(() {
+        _releaseForm = medicine!.releaseForm;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -256,20 +289,23 @@ class MedicineCreateWidgetState extends State<MedicineCreateWidget> {
   }
 
   Widget _scannerButton(BuildContext context) {
-    return Row(children: [
-      Expanded(
-          child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: OutlinedButton(
-                  onPressed: _onOpenScannerPressed,
-                  child: Text("Сканировать штрих-код"))))
-    ]);
+    if (showScannerButton) {
+      return Row(children: [
+        Expanded(
+            child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                child: OutlinedButton(
+                    onPressed: _onOpenScannerPressed,
+                    child: Text("Сканировать штрих-код"))))
+      ]);
+    } else {
+      return SizedBox.shrink();
+    }
   }
 
   void _onOpenScannerPressed() async {
     BarcodeFinderResult? result = await Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => MedicinePackScannerPage())
-    );
+        MaterialPageRoute(builder: (context) => MedicinePackScannerPage()));
     if (result is Success) {
       _nameController.text = result.medicineName;
       _showToast("Лекарство найдено");
@@ -280,18 +316,20 @@ class MedicineCreateWidgetState extends State<MedicineCreateWidget> {
 
   void _showToast(String msg) {
     Fluttertoast.showToast(
-          msg: msg,
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          textColor: Colors.white,
-          fontSize: 16.0);
+        msg: msg,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        textColor: Colors.white,
+        fontSize: 16.0);
   }
 
   Medicine? collectOnSave() {
     if (_formKey.currentState?.validate() == true) {
       String name = _nameController.text;
+      double? dosage = double.tryParse(_dosageContoller.text);
+
       return Medicine(
-          id: Medicine.NO_ID, name: name, releaseForm: _releaseForm);
+          id: Medicine.NO_ID, name: name, releaseForm: _releaseForm, dosage: dosage);
     }
     return null;
   }
