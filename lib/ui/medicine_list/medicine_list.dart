@@ -4,6 +4,7 @@ import 'package:medicine_chest/entities/medicine_pack.dart';
 import 'package:medicine_chest/ui/add_medicine_pack/add_medicine_pack_full.dart';
 import 'package:medicine_chest/ui/dependencies/medicine_pack_storage.dart';
 import 'package:medicine_chest/ui/dependencies/medicine_storage.dart';
+import 'package:medicine_chest/ui/edit_medicine_pack/edit_medicine_pack.dart';
 import 'package:medicine_chest/ui/medicine_list/medicine_pack_widget.dart';
 import 'package:medicine_chest/ui/medicine_list/medicine_packs_title_widget.dart';
 import 'package:medicine_chest/ui/medicine_list/medicine_with_packs.dart';
@@ -103,7 +104,7 @@ class _MedicinesListPageState extends State<MedicinesListPage> {
   }
 
   Widget _buildMedicinePackUi(MedicinePack pack) {
-    return MedicinePackWidget(pack, onDelete: _onMedicineDelete);
+    return MedicinePackWidget(pack, onDelete: _onMedicineDelete, onEdit: _onPackEdit,);
   }
 
   Future<List<MedicineWithPacks>> _getMedicineWithPacks() async {
@@ -143,6 +144,20 @@ class _MedicinesListPageState extends State<MedicinesListPage> {
         onConfirmed: () {
       _onMedicineDeleteConfirmed(pack);
     });
+  }
+
+  void _onPackEdit(MedicinePack pack) async {
+    bool? medicineUpdated = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => EditMedicinePackPage(
+          pack.id,
+          _medicinePackStorage,
+        ),
+      ),
+    );
+    if (medicineUpdated == true) {
+      _loadPacks();
+    }
   }
 
   void _onMedicineDeleteConfirmed(MedicinePack pack) async {

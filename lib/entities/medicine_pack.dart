@@ -7,7 +7,11 @@ class MedicinePack {
   double leftAmount;
   DateTime expirationTime;
 
-  MedicinePack({required this.id, this.medicine, required this.leftAmount, required this.expirationTime});
+  MedicinePack(
+      {required this.id,
+      this.medicine,
+      required this.leftAmount,
+      required this.expirationTime});
 
   static int NO_ID = -1;
 
@@ -23,4 +27,16 @@ class MedicinePack {
   String getFormattedExpirationTime() {
     return DateFormat("dd.MM.yyyy").format(expirationTime);
   }
+
+  @override
+  bool operator ==(Object other) {
+    return other is MedicinePack &&
+        other.id == id &&
+        other.medicine == medicine &&
+        other.leftAmount == leftAmount &&
+        other.expirationTime == expirationTime;
+  }
+
+  @override
+  int get hashCode => id;
 }

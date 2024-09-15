@@ -1,3 +1,4 @@
+import 'package:medicine_chest/data/medicine/medicine_storage_impl.dart';
 import 'package:medicine_chest/entities/medicine.dart';
 import 'package:medicine_chest/entities/medicine_pack.dart';
 import 'package:medicine_chest/ui/dependencies/medicine_pack_storage.dart';
@@ -18,8 +19,9 @@ class MedicinePackStorageImpl implements MedicinePackStorage {
   }
 
   final Future<Database> _db;
+  MedicineStorageImpl _medicineStorageImpl;
 
-  MedicinePackStorageImpl(this._db);
+  MedicinePackStorageImpl(this._db, this._medicineStorageImpl);
 
   @override
   Future<int> saveMedicinePack(MedicinePack pack) async {
@@ -45,13 +47,14 @@ class MedicinePackStorageImpl implements MedicinePackStorage {
         .query(_tableName, where: 'medicine_id = ? AND active = 1', whereArgs: [medicine.id]);
     List<MedicinePack> result = [];
     for (var data in medicinePacks) {
-      var pack = _convertToMedicinePack(data);
+      var pack = await _convertToMedicinePack(data);
       pack.medicine = medicine;
       result.add(pack);
     }
     return result;
   }
 
+  @override
   Future<MedicinePack?> getById(int packId) async {
      final db = await _db;
      return db.transaction((txn) async {
@@ -63,7 +66,7 @@ class MedicinePackStorageImpl implements MedicinePackStorage {
     List<Map<String, Object?>> medicinePacks = await txn.query(_tableName, where: 'id = ?', whereArgs: [packId]);
     var data = medicinePacks.firstOrNull;
     if (data != null) {
-      return _convertToMedicinePack(data);
+      return _convertToMedicinePack(data, txn: txn);
     } else {
       return null;
     }
@@ -84,9 +87,12 @@ class MedicinePackStorageImpl implements MedicinePackStorage {
     }
   }
 
-  MedicinePack _convertToMedicinePack(Map<String, Object?> data) {
+  Future<MedicinePack> _convertToMedicinePack(Map<String, Object?> data, {Transaction? txn = null}) async {
+    final medicineId = data['medicine_id'] as int;
+    final medicine = await _medicineStorageImpl.getMedicineById(medicineId, txn: txn);
     return MedicinePack(
         id: data['id'] as int,
+        medicine: medicine,
         leftAmount: data['left_amount'] as double,
         expirationTime: DateTime.fromMillisecondsSinceEpoch(
             data['expiration_time'] as int));

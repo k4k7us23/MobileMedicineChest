@@ -1,10 +1,4 @@
-enum MedicineReleaseForm {
-  tablet,
-  injection,
-  liquid,
-  powder,
-  other
-}
+enum MedicineReleaseForm { tablet, injection, liquid, powder, other }
 
 extension MedicineReleaseFormName on MedicineReleaseForm {
   String get name {
@@ -22,7 +16,6 @@ extension MedicineReleaseFormName on MedicineReleaseForm {
     }
   }
 }
-
 
 class Medicine {
   static int NO_ID = -1;
@@ -44,8 +37,13 @@ class Medicine {
     return label;
   }
 
-  bool operator==(Object other) {
-    return other is Medicine && other.id == id;
+  @override
+  bool operator ==(Object other) {
+    return other is Medicine &&
+        other.id == id &&
+        other.name == name &&
+        other.releaseForm == releaseForm &&
+        other.dosage == dosage;
   }
 
   @override

@@ -98,7 +98,7 @@ class AddSchemeState extends State<AddSchemePage> {
     if (schemeId == Scheme.NO_ID) {
       return "Создать расписание приема";
     } else {
-      return "Редактировать расписание приема";
+      return "Редактировать расписание";
     }
   }
 
@@ -212,13 +212,21 @@ class AddSchemeState extends State<AddSchemePage> {
       final int id = await _schemeStorage.saveScheme(scheme);
 
       Fluttertoast.showToast(
-          msg: "Схема приема создана",
+          msg: _getFinalToastMsg(),
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           textColor: Colors.white,
           fontSize: 16.0);
 
       Navigator.of(context).pop(true);
+    }
+  }
+
+  String _getFinalToastMsg() {
+    if (schemeId == Scheme.NO_ID) {
+      return "Схема приема создана";
+    } else {
+      return "Схема приема обновлена";
     }
   }
 }

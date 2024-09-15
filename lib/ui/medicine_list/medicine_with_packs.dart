@@ -20,4 +20,17 @@ class MedicineWithPacks {
     }
     return result;
   }
+
+  @override
+  bool operator ==(Object other) {
+    return other is MedicineWithPacks &&
+    other.medicine == other.medicine &&
+    other.packs == other.packs;
+  }
+  
+  @override
+  int get hashCode {
+    return medicine.hashCode + 31 * packs.hashCode;
+  } 
+  
 }
