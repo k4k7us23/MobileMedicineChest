@@ -4,6 +4,7 @@ import 'package:medicine_chest/data/medicine/medicine_storage_impl.dart';
 import 'package:medicine_chest/entities/every_day_schedule.dart';
 import 'package:medicine_chest/entities/scheme.dart';
 import 'package:medicine_chest/entities/take_schedule.dart';
+import 'package:medicine_chest/notifications/notification_manager.dart';
 import 'package:medicine_chest/ui/dependencies/medicine_storage.dart';
 import 'package:medicine_chest/ui/dependencies/scheme_storage.dart';
 import 'package:sqflite/sqflite.dart';
@@ -13,8 +14,9 @@ class SchemeStorageImpl extends SchemeStorage {
 
   final Future<Database> _db;
   MedicineStorageImpl _medicineStorageImpl;
+  NotificationManager _notificationManager;
 
-  SchemeStorageImpl(this._db, this._medicineStorageImpl);
+  SchemeStorageImpl(this._db, this._medicineStorageImpl, this._notificationManager);
 
   static onDatabaseCreate(Database db) {
     db.execute("""
@@ -44,6 +46,8 @@ class SchemeStorageImpl extends SchemeStorage {
     if (scheme.id != Scheme.NO_ID) {
       values["id"] = scheme.id;
     }
+
+    _notificationManager.setupNotificationsForScheme(scheme);
 
     return db.insert(_tableName, values,
         conflictAlgorithm: ConflictAlgorithm.replace);
@@ -125,6 +129,7 @@ class SchemeStorageImpl extends SchemeStorage {
   @override
   Future<void> deleteScheme(Scheme scheme) async {
     final db = await _db;
+    _notificationManager.cancelNotificationForScheme(scheme);
     await db.delete(_tableName, where: "id = ?", whereArgs: [scheme.id]);
   }
   
