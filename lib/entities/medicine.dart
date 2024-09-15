@@ -43,4 +43,11 @@ class Medicine {
     String label = "$name (форма выпуска: ${releaseForm.name}) $dosagePart";
     return label;
   }
+
+  bool operator==(Object other) {
+    return other is Medicine && other.id == id;
+  }
+
+  @override
+  int get hashCode => id;
 }

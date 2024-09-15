@@ -174,6 +174,13 @@ class MedicineSelectWidgetState extends State<MedicineSelectWidget> {
     return DropdownMenuEntry(value: medicine, label: medicine.getPrintedName());
   }
 
+  void setMedicine(Medicine medicine) {
+    setState(() {
+      _selectedMedicine = medicine;
+      onMedicineSetted?.call(_selectedMedicine);
+    });
+  }
+
   Medicine? collectOnSave(BuildContext context) {
     if (_selectedMedicine == null) {
       final snackBar = SnackBar(

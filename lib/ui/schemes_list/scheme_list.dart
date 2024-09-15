@@ -94,6 +94,9 @@ class _SchemeListPageState extends State<SchemeListPage> {
       context,
       onDelete: () {
         _onSchemeDeleteClicked(scheme);
+      },
+      onEdit: () {
+        _onEditClicked(scheme.id);
       }
     );
   }
@@ -160,7 +163,15 @@ class _SchemeListPageState extends State<SchemeListPage> {
 
   void _onAddClicked() async {
     bool? newSchemeAdded = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => AddSchemePage(_medcineStorage, _schemeStorage)));
+        builder: (context) => AddSchemePage(_medcineStorage, _schemeStorage, Scheme.NO_ID)));
+    if (newSchemeAdded == true) {
+      _loadSchemes();
+    }
+  }
+
+  void _onEditClicked(int schemeId) async {
+    bool? newSchemeAdded = await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => AddSchemePage(_medcineStorage, _schemeStorage, schemeId)));
     if (newSchemeAdded == true) {
       _loadSchemes();
     }

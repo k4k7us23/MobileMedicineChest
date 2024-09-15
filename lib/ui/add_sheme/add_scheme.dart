@@ -14,20 +14,22 @@ import 'package:medicine_chest/ui/shared/date_picker_text_field.dart';
 class AddSchemePage extends StatefulWidget {
   MedicineStorage _medicineStorage;
   SchemeStorage _schemeStorage;
+  int schemeId;
 
-  AddSchemePage(this._medicineStorage, this._schemeStorage, {super.key});
+  AddSchemePage(this._medicineStorage, this._schemeStorage, this.schemeId, {super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return AddSchemeState(_medicineStorage, _schemeStorage);
+    return AddSchemeState(_medicineStorage, _schemeStorage, schemeId);
   }
 }
 
 class AddSchemeState extends State<AddSchemePage> {
   MedicineStorage _medicineStorage;
   SchemeStorage _schemeStorage;
+  int schemeId;
 
-  AddSchemeState(this._medicineStorage, this._schemeStorage);
+  AddSchemeState(this._medicineStorage, this._schemeStorage, this.schemeId);
 
   final _selectKey = GlobalKey<MedicineSelectWidgetState>();
   final _formKey = GlobalKey<FormState>();
@@ -39,11 +41,42 @@ class AddSchemeState extends State<AddSchemePage> {
   List<int> _dayTimeMoments = [];
 
   @override
+  void initState() {
+    super.initState();
+
+    if (schemeId != Scheme.NO_ID) {
+      _loadScheme();
+    }
+  }
+
+  void _loadScheme() async {
+      Scheme? scheme = await _schemeStorage.getById(schemeId);
+      if (scheme != null) {
+        _applyScheme(scheme);
+      }
+  }
+ 
+  void _applyScheme(Scheme scheme) {
+    _selectKey.currentState?.setMedicine(scheme.medicine);
+
+    _dosageSizeController.text = scheme.oneTakeAmount.toStringAsFixed(2);
+    setState(() {
+      _beginDateTime = scheme.takeSchedule.getFirstTakeDay();
+      _endDateTime = scheme.takeSchedule.getLastTakeDay();
+
+      List<DateTime> timeMoments = scheme.takeSchedule.getTakeMomentsForDay(_beginDateTime);
+      List<int> minutesOfTheDay = timeMoments.map((dateTime) => TimeOfDay.fromDateTime(dateTime))
+        .map((timeOfDay) => timeOfDay.hour * 60 + timeOfDay.minute).toList();
+      _dayTimeMoments = minutesOfTheDay;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text("Создать расписание приема"),
+          title: Text(_getPageTitle()),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => {onSave(context)},
@@ -59,6 +92,14 @@ class AddSchemeState extends State<AddSchemePage> {
               padding: EdgeInsets.symmetric(horizontal: 8.0),
               child: _dayTimeMomentsSelector()),
         ]))));
+  }
+
+  String _getPageTitle() {
+    if (schemeId == Scheme.NO_ID) {
+      return "Создать расписание приема";
+    } else {
+      return "Редактировать расписание приема";
+    }
   }
 
   Widget _mainContent() {
@@ -88,7 +129,9 @@ class AddSchemeState extends State<AddSchemePage> {
               setState(() {
                 _beginDateTime = newDateTime;
               })
-            });
+            },
+            key: UniqueKey(),
+      );
   }
 
   Widget _lastDaySelectorWidget() {
@@ -100,7 +143,9 @@ class AddSchemeState extends State<AddSchemePage> {
               setState(() {
                 _endDateTime = newDateTime;
               })
-            });
+            },
+        key: UniqueKey(),
+    );
   }
 
   Widget _dosageSizeWidget() {
@@ -135,11 +180,11 @@ class AddSchemeState extends State<AddSchemePage> {
   }
 
   Widget _dayTimeMomentsSelector() {
-    return DayTimeMomentsSelector((dayTimeMoments) {
+    return DayTimeMomentsSelector(initialDayTimeMoments: _dayTimeMoments, (dayTimeMoments) {
       setState(() {
         _dayTimeMoments = dayTimeMoments;
       });
-    });
+    }, key: UniqueKey());
   }
 
   onSave(BuildContext _context) async {
@@ -162,7 +207,7 @@ class AddSchemeState extends State<AddSchemePage> {
       TakeSchedule everyDaySchedule = EveryDaySchedule.create(
           _dayTimeMoments.map((minutes) => minutes * 60).toList(), _beginDateTime, _endDateTime);
       Scheme scheme =
-          Scheme(Scheme.NO_ID, medicine, oneTakeAmount, everyDaySchedule);
+          Scheme(schemeId, medicine, oneTakeAmount, everyDaySchedule);
 
       final int id = await _schemeStorage.saveScheme(scheme);
 

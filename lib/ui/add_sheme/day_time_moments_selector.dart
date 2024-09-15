@@ -4,12 +4,13 @@ import 'package:intl/intl.dart';
 class DayTimeMomentsSelector extends StatefulWidget {
 
   ValueSetter<List<int>> _dayTimeMomentsUpdated;
+  List<int> initialDayTimeMoments = [];
 
-  DayTimeMomentsSelector(this._dayTimeMomentsUpdated, {super.key});
+  DayTimeMomentsSelector(this._dayTimeMomentsUpdated, {this.initialDayTimeMoments = const [], super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return DayTimeMomentsState(this._dayTimeMomentsUpdated);
+    return DayTimeMomentsState(this._dayTimeMomentsUpdated, this.initialDayTimeMoments);
   }
 }
 
@@ -18,10 +19,10 @@ class DayTimeMomentsState extends State<DayTimeMomentsSelector> {
   static final NumberFormat timeMomentNumberFormat = NumberFormat("00");
 
   ValueSetter<List<int>> _dayTimeMomentsUpdated;
+  final List<int> _dayTimeMoments;
 
-  DayTimeMomentsState(this._dayTimeMomentsUpdated);
-
-  final List<int> _dayTimeMoments = [];
+  DayTimeMomentsState(this._dayTimeMomentsUpdated, this._dayTimeMoments);
+  
 
   @override
   Widget build(BuildContext context) {
