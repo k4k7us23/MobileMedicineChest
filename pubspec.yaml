@@ -21,6 +21,7 @@ dependencies:
   test: ^1.25.7
   uuid: ^4.5.0
   mobile_scanner: ^5.2.3
+  flutter_local_notifications: ^17.2.2
 
 dev_dependencies:
   flutter_test:
