@@ -4,6 +4,7 @@ import 'package:medicine_chest/data/medicine/medicine_pack_storage_impl.dart';
 import 'package:medicine_chest/data/medicine/medicine_storage_impl.dart';
 import 'package:medicine_chest/data/scheme/scheme_storage_impl.dart';
 import 'package:medicine_chest/data/take_record/take_record_storage_impl.dart';
+import 'package:medicine_chest/notifications/notification_manager.dart';
 import 'package:medicine_chest/ui/add_sheme/add_scheme.dart';
 import 'package:medicine_chest/ui/dependencies/medicine_pack_storage.dart';
 import 'package:medicine_chest/ui/medicine_list/medicine_list.dart';
@@ -23,9 +24,12 @@ Future<void> main() async {
     dbCreator.create();
   }, version: DatabaseCreator.DATABASE_VERSION);
 
+  final notificationManager = NotificationManager();
+  notificationManager.requestNotificationPermission();
+
   final medicineStorageImpl = MedicineStorageImpl(database);
   final medicinePackStorageImpl = MedicinePackStorageImpl(database, medicineStorageImpl);
-  final schemeStorageImpl = SchemeStorageImpl(database, medicineStorageImpl);
+  final schemeStorageImpl = SchemeStorageImpl(database,  medicineStorageImpl, notificationManager);
   final takeRecordStorageImpl = TakeRecordStorageImpl(
       database, medicineStorageImpl, medicinePackStorageImpl);
   final dayScheduleProvider =
