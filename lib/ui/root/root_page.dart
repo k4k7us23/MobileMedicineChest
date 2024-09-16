@@ -96,6 +96,7 @@ class RootMedicinePageState extends State<RootPage> {
             label: 'Схемы приема',
           ),
           BottomNavigationBarItem(
+            key: ValueKey("medicines_page"),
             icon: Icon(Icons.medication),
             label: 'Лекарства',
           ),

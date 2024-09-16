@@ -60,6 +60,7 @@ class _MedicinesListPageState extends State<MedicinesListPage> {
       ),
       body: child,
       floatingActionButton: FloatingActionButton(
+        key: ValueKey("add_medicine_btn"),
         onPressed: () => {_onAddClicked()},
         child: const Icon(Icons.add),
       ),

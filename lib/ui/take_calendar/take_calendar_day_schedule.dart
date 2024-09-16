@@ -59,9 +59,11 @@ class _TakeCalendarDayScheduleState extends State<TakeCalendarDayScheduleWidget>
     });
 
     List<TakeCalendarItem> loadedItems = await _provider.getSchedule(_currentDayModel.getDayTime());
-    setState(() {
-      _items = loadedItems;
-    });
+    if (mounted) {
+      setState(() {
+        _items = loadedItems;
+      });
+    }
   }
 
   @override
