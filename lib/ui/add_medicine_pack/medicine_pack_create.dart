@@ -52,11 +52,12 @@ class MedicinePackCreateWidgetState extends State<MedicinePackCreateWidget> {
           child: Column(
             children: [
               TextFormField(
+                key: ValueKey("left_amount_input"),
                   validator: (value) {
                     var valueWithoutSpaces = value?.replaceAll(" ", "");
                     if (valueWithoutSpaces == null ||
                         valueWithoutSpaces.isEmpty) {
-                      return "Отстаток не может быть пустым";
+                      return "Остаток не может быть пустым";
                     }
 
                     var amountLeft = parseAmountLeft(value);

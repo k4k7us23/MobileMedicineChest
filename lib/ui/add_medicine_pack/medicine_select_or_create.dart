@@ -64,7 +64,7 @@ class MedicineSelectOrCreateState extends State<MedicineSelectOrCreateWidget> {
       segments: <ButtonSegment<_Type>>[
         ButtonSegment<_Type>(
           value: _Type._select,
-          label: Text('Выбрать существующее'),
+          label: Text(key: ValueKey("select_existing_medicine"), 'Выбрать существующее'),
           icon: null,
           enabled: _selectAllowed,
         ),
@@ -132,13 +132,15 @@ class MedicineSelectWidgetState extends State<MedicineSelectWidget> {
 
   void _loadMedicines() async {
     var loadedMedicines = await _medicineStorage.getMedicines();
-    setState(() {
-      _medicines = loadedMedicines;
-      if (loadedMedicines.isNotEmpty) {
-        _selectedMedicine = loadedMedicines.first;
-        onMedicineSetted?.call(_selectedMedicine);
-      }
-    });
+    if (mounted) {
+      setState(() {
+        _medicines = loadedMedicines;
+        if (loadedMedicines.isNotEmpty) {
+          _selectedMedicine = loadedMedicines.first;
+          onMedicineSetted?.call(_selectedMedicine);
+        }
+      });
+    }
   }
 
   @override
@@ -245,6 +247,7 @@ class MedicineCreateWidgetState extends State<MedicineCreateWidget> {
           children: [
             _scannerButton(context),
             TextFormField(
+              key: ValueKey("medicine_name_input"),
                 validator: (value) {
                   var valueWithoutSpaces = value?.replaceAll(" ", "");
                   if (valueWithoutSpaces == null ||
@@ -290,7 +293,9 @@ class MedicineCreateWidgetState extends State<MedicineCreateWidget> {
 
   Widget _scannerButton(BuildContext context) {
     if (showScannerButton) {
-      return Row(children: [
+      return Row(
+        key: ValueKey("scan_barcode_btn"),
+        children: [
         Expanded(
             child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10.0),

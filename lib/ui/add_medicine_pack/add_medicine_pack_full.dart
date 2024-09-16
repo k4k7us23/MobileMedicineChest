@@ -67,6 +67,7 @@ class _AddMedicinePackFullPageState extends State<AddMedicinePackFullPage> {
         ),
       )),
       floatingActionButton: FloatingActionButton(
+        key: ValueKey("save_medicine_fab"),
         onPressed: () => {onSave(context)},
         child: const Icon(Icons.check),
       ),

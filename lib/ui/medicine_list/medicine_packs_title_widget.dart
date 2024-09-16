@@ -18,6 +18,7 @@ class MedicinePacksTitleWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
+          key: ValueKey("medicine_title_widget"),
           medicine.name,
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: colorScheme.primary),
         ),
@@ -25,6 +26,7 @@ class MedicinePacksTitleWidget extends StatelessWidget {
             onEditClicked?.call();
         },),
         Text(
+          key: ValueKey("medicine_title_left_amount"),
           'Остаток: $leftAmount',
           style: TextStyle(fontSize: 16),
         ),
