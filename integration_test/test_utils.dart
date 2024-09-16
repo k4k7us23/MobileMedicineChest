@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:medicine_chest/data/database_creator.dart';
 import 'package:medicine_chest/data/medicine/medicine_pack_storage_impl.dart';
@@ -55,3 +56,17 @@ Future<TestDependenices> createTestApp(WidgetTester tester) async {
       schemeStorage: schemeStorageImpl,
       takeRecordStorage: takeRecordStorageImpl);
 }
+
+  Future<void> enterTime(WidgetTester tester, int hour, int minute) async {
+    assert(hour >= 0 && hour < 24, 'Hour must be between 0 and 23');
+    assert(minute >= 0 && minute < 60, 'Minute must be between 0 and 59');
+    await tester.tap(find.byTooltip('Switch to text input mode'));
+    await tester.pumpAndSettle();
+
+    final inputs = find.byType(TextFormField);
+
+    await tester.enterText(inputs.at(0), hour.toString());
+    await tester.enterText(inputs.at(1), minute.toString());
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+  }

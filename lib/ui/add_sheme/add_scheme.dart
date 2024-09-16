@@ -79,6 +79,7 @@ class AddSchemeState extends State<AddSchemePage> {
           title: Text(_getPageTitle()),
         ),
         floatingActionButton: FloatingActionButton(
+          key: ValueKey("scheme_save_fab"),
           onPressed: () => {onSave(context)},
           child: const Icon(Icons.check),
         ),
@@ -152,6 +153,7 @@ class AddSchemeState extends State<AddSchemePage> {
     return Form(
         key: _formKey,
         child: TextFormField(
+          key: ValueKey("scheme_amount_input"),
             validator: (value) {
               var valueWithoutSpaces = value?.replaceAll(" ", "");
               if (valueWithoutSpaces == null || valueWithoutSpaces.isEmpty) {

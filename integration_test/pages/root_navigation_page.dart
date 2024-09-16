@@ -11,4 +11,10 @@ class TestRootNavigationPage {
     await _tester.tap(medicinesPageButton);
     await Future.delayed(Duration(seconds: 1));
   }
+
+  Future<void> openSchemesList() async {
+    final medicinesPageButton = find.byKey(ValueKey("schemes_page"));
+    await _tester.tap(medicinesPageButton);
+    await Future.delayed(Duration(seconds: 1));
+  }
 }
