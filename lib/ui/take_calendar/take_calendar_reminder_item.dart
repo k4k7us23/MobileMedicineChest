@@ -15,13 +15,16 @@ class TakeCalendarReminderItemWidget extends StatelessWidget {
           child: Icon(Icons.schedule)),
       _mainColumn(context),
       Spacer(),
-      Padding(padding: EdgeInsets.symmetric(horizontal: 16.0), child: _timeWidget()), 
+      Padding(
+          key: ValueKey("take_medicine_reminder_item_time"),
+          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          child: _timeWidget()),
     ]);
   }
 
   Widget _mainColumn(BuildContext context) {
-  
     return Column(
+      key: ValueKey("take_medicine_reminder_item_mainColumn"),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -46,7 +49,10 @@ class TakeCalendarReminderItemWidget extends StatelessWidget {
       textColor = scheme.primary;
     }
 
-    return Text(takeAmountString, style: TextStyle(color: textColor),);
+    return Text(
+      takeAmountString,
+      style: TextStyle(color: textColor),
+    );
   }
 
   Widget _timeWidget() {
