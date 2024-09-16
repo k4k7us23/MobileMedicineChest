@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:medicine_chest/ui/medicine_list/medicine_packs_title_widget.dart';
 
 class TestMedicineListPage {
   WidgetTester _tester;
@@ -27,5 +28,27 @@ class TestMedicineListPage {
     final widgetText =
         medicineTitleLeftAmountWidiget.evaluate().single.widget as Text;
     expect(widgetText.data, "Остаток: $leftAmount");
+  }
+
+  Future<void> clickOnMedicineTitle(String medicineName) async {
+    await _tester.tap(find.descendant(
+        of: find.widgetWithText(MedicinePacksTitleWidget, medicineName),
+        matching: find.byKey(ValueKey("medicine_title_widget"))));
+    await _tester.pumpAndSettle();
+  }
+
+  Future<void> expectMedicineExpireAt(String date) async {
+    final medicineTitleLeftAmountWidiget =
+        find.byKey(ValueKey("medicine_expire_at_text"));
+    await _tester.ensureVisible(medicineTitleLeftAmountWidiget);
+    final widgetText =
+        medicineTitleLeftAmountWidiget.evaluate().single.widget as Text;
+    expect(widgetText.data, "Срок годности: $date");
+  }
+
+  Future<void> expectMedicineExpired() async {
+    final medicineTitleLeftAmountWidiget =
+        find.byKey(ValueKey("medicine_expired_text"));
+    await _tester.ensureVisible(medicineTitleLeftAmountWidiget);
   }
 }
