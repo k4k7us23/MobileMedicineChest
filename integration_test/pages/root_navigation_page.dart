@@ -17,4 +17,10 @@ class TestRootNavigationPage {
     await _tester.tap(medicinesPageButton);
     await Future.delayed(Duration(seconds: 1));
   }
+
+  Future<void> openCalendar() async {
+    final medicinesPageButton = find.byKey(ValueKey("calendar_page"));
+    await _tester.tap(medicinesPageButton);
+    await Future.delayed(Duration(seconds: 1));
+  }
 }

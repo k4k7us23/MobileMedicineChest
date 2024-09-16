@@ -19,7 +19,6 @@ class TakeMedicineReminder extends TakeCalendarItem {
     return timeOfDay;
   }
 
-  
 }
 
 class MedicineTaken extends TakeCalendarItem {

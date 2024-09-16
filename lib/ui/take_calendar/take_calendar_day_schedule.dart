@@ -78,7 +78,7 @@ class _TakeCalendarDayScheduleState extends State<TakeCalendarDayScheduleWidget>
   }
 
   Widget _emptyText() {
-    return Text("В этот день нет событий");
+    return Text(key:ValueKey("calendar_empty_day_text"), "В этот день нет событий");
   }
 
   Widget _mainContent(List<TakeCalendarItem> calendarItems) {
