@@ -55,6 +55,7 @@ class _TakeMedicinePage extends State<TakeMedicinePage> {
         body: RawScrollbar(
             child: SingleChildScrollView(child: _mainContent(context))),
         floatingActionButton: FloatingActionButton(
+          key: ValueKey("save_medicine_take"),
           onPressed: () => {_onSaveClicked()},
           child: const Icon(Icons.check),
         ));
@@ -120,6 +121,7 @@ class _TakeMedicinePage extends State<TakeMedicinePage> {
     return Form(
         key: _formKey,
         child: TextFormField(
+          key: ValueKey("take_medicine_dosage_input"),
             validator: (value) {
               var valueWithoutSpaces = value?.replaceAll(" ", "");
               if (valueWithoutSpaces == null || valueWithoutSpaces.isEmpty) {

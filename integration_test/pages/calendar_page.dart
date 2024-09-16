@@ -6,9 +6,16 @@ class TestCalendarPage {
 
   TestCalendarPage(this._tester);
 
+  Future<void> clickAddTakeRecord() async {
+    await _tester.tap(find.byKey(ValueKey("add_take_fab")));
+    await Future.delayed(Duration(seconds: 2));
+    await _tester.pumpAndSettle();
+  }
+
   Future<void> expectNoEvents() async {
     final medicineTitleLeftAmountWidiget =
         find.byKey(ValueKey("calendar_empty_day_text"));
+    await _tester.pumpAndSettle();
     await _tester.ensureVisible(medicineTitleLeftAmountWidiget);
   }
 

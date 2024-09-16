@@ -97,13 +97,14 @@ class _MedicinePackState extends State<MedicinePackWidget> {
             ],
           ));
     } else {
-      return Text("Срок годности: ${_pack.getFormattedExpirationTime()}");
+      return Text(key: ValueKey("medicine_expire_at_text"), "Срок годности: ${_pack.getFormattedExpirationTime()}");
     }
   }
 
   Widget _buildExpiredText(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Text.rich(
+      key: ValueKey("medicine_expired_text"),
       TextSpan(
         children: [
           TextSpan(

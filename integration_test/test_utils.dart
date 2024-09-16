@@ -15,7 +15,11 @@ import 'package:sqflite/sqflite.dart';
 
 import 'test_dependenices.dart';
 
+import 'package:timezone/data/latest_all.dart' as tz;
+
 Future<TestDependenices> createTestApp(WidgetTester tester) async {
+  tz.initializeTimeZones(); 
+
   final dbName = "test_medicine_${DateTime.now().millisecondsSinceEpoch}.db";
   final dbFile = File(join(await getDatabasesPath(), dbName));
   try {
