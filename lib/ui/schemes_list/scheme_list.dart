@@ -54,6 +54,7 @@ class _SchemeListPageState extends State<SchemeListPage> {
         ),
         body: _mainContent(),
         floatingActionButton: FloatingActionButton(
+          key: ValueKey("add_scheme_btn"),
           onPressed: () => {_onAddClicked()},
           child: const Icon(Icons.add),
         ));
@@ -136,11 +137,15 @@ class _SchemeListPageState extends State<SchemeListPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
+          key: ValueKey("scheme_medicine_name"),
           medicineName,
           style: TextStyle(fontSize: 20.0),
         ),
         Text(durationString, style: TextStyle(fontSize: 16.0)),
-        Text(takeCountString),
+        Text(
+          key: ValueKey("scheme_take_count"), 
+          takeCountString
+        ),
       ],
     );
   }

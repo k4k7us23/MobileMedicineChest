@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DayTimeMomentsSelector extends StatefulWidget {
-
   ValueSetter<List<int>> _dayTimeMomentsUpdated;
   List<int> initialDayTimeMoments = [];
 
-  DayTimeMomentsSelector(this._dayTimeMomentsUpdated, {this.initialDayTimeMoments = const [], super.key});
+  DayTimeMomentsSelector(this._dayTimeMomentsUpdated,
+      {this.initialDayTimeMoments = const [], super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return DayTimeMomentsState(this._dayTimeMomentsUpdated, this.initialDayTimeMoments);
+    return DayTimeMomentsState(
+        this._dayTimeMomentsUpdated, this.initialDayTimeMoments);
   }
 }
 
@@ -22,7 +23,6 @@ class DayTimeMomentsState extends State<DayTimeMomentsSelector> {
   final List<int> _dayTimeMoments;
 
   DayTimeMomentsState(this._dayTimeMomentsUpdated, this._dayTimeMoments);
-  
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,9 @@ class DayTimeMomentsState extends State<DayTimeMomentsSelector> {
         shrinkWrap: true,
         itemBuilder: (context, index) {
           if (index == 0) {
-            return Padding(padding: EdgeInsets.only(bottom: 8.0), child: _buildTitle(context));
+            return Padding(
+                padding: EdgeInsets.only(bottom: 8.0),
+                child: _buildTitle(context));
           } else if (index == _dayTimeMoments.length + 1) {
             return Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8.0),
@@ -67,6 +69,7 @@ class DayTimeMomentsState extends State<DayTimeMomentsSelector> {
   Widget _buildAddButton(BuildContext context) {
     var actionColor = Theme.of(context).colorScheme.primary;
     return TextButton(
+        key: ValueKey("scheme_add_time_btn"),
         onPressed: () => {_onAddTimeMomentPressed(context)},
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           Icon(Icons.add, color: actionColor),
@@ -113,13 +116,15 @@ class DayTimeMomentsState extends State<DayTimeMomentsSelector> {
 
   Widget _buildTimeMoment(int minuteOfDay) {
     return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      Stack(alignment: Alignment.center,
+      Stack(
+        alignment: Alignment.center,
         children: [
-          Row(children: [
+          Row(
+            children: [
               Expanded(child: Container()),
-              IconButton(onPressed: () => {
-                _removeDayTimeMoment(minuteOfDay)
-              }, icon: Icon(Icons.delete)) 
+              IconButton(
+                  onPressed: () => {_removeDayTimeMoment(minuteOfDay)},
+                  icon: Icon(Icons.delete))
             ],
           ),
           Text(
@@ -131,5 +136,4 @@ class DayTimeMomentsState extends State<DayTimeMomentsSelector> {
       Divider(),
     ]);
   }
-
 }

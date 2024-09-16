@@ -88,10 +88,12 @@ class RootMedicinePageState extends State<RootPage> {
     return BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
+            key: ValueKey("calendar_page"),
             icon: Icon(Icons.calendar_month),
             label: 'Календарь',
           ),
           BottomNavigationBarItem(
+            key: ValueKey("schemes_page"),
             icon: Icon(Icons.receipt),
             label: 'Схемы приема',
           ),
