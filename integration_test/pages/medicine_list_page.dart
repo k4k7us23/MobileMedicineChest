@@ -34,6 +34,7 @@ class TestMedicineListPage {
     await _tester.tap(find.descendant(
         of: find.widgetWithText(MedicinePacksTitleWidget, medicineName),
         matching: find.byKey(ValueKey("medicine_title_widget"))));
+    await Future.delayed(Duration(seconds: 2));
     await _tester.pumpAndSettle();
   }
 

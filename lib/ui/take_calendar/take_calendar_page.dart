@@ -41,6 +41,7 @@ class TakeCalendarPageState extends State<TakeCalendarPage> {
       ),
       body: _mainContent(),
       floatingActionButton: FloatingActionButton(
+        key: ValueKey("add_take_fab"),
         onPressed: () => {_onAddClicked()},
         child: const Icon(Icons.add),
       ),

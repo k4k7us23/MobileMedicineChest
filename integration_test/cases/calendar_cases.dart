@@ -12,7 +12,7 @@ import '../test_utils.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   group('Calendar', () {
-    /*testWidgets('Empty schedule', (tester) async {
+    testWidgets('Empty schedule', (tester) async {
       final deps = await createTestApp(tester);
       
       //Открываем календарь
@@ -21,7 +21,7 @@ void main() {
 
       final calendarPage = TestCalendarPage(tester);
       await calendarPage.expectNoEvents();
-    });*/
+    });
 
     testWidgets('Two reminders in day', (tester) async {
       final deps = await createTestApp(tester);
